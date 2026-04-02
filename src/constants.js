@@ -51,7 +51,7 @@ export const AI_TOOLS = [
     name: 'Google Gemini CLI (gemini)',
     command: 'gemini',
     args: ['generate-text'],
-    install: 'gcloud components install ai',
+    install: 'npm install -g @google/gemini-cli',
     docs: 'https://cloud.google.com/ai/docs',
   },
   {

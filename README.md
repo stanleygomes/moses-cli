@@ -5,7 +5,7 @@
 **Validação automática de Merge Requests do GitLab com IA**
 
 [![npm version](https://img.shields.io/npm/v/@moses-cli/core.svg)](https://www.npmjs.com/package/@moses-cli/core)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org/)
+[![Node.js Version](https://img.shields.io/badge/node->=18-brightgreen.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 </div>
@@ -112,7 +112,7 @@ Fluxo:
 | GitHub Copilot | `gh copilot` | `gh extension install github/gh-copilot` |
 | Claude Code | `claude` | `npm install -g @anthropic-ai/claude-cli` |
 | ChatGPT CLI | `chatgpt` | `npm install -g @adasupport/openai-cli` |
-| Google Gemini CLI | `gemini` | `gcloud components install ai` |
+| Google Gemini CLI | `gemini` | `npm install -g @google/gemini-cli` |
 | Aider | `aider` | `pip install aider-chat` |
 
 ---
