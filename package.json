@@ -1,7 +1,7 @@
 {
-  "name": "@moses-cli/core",
+  "name": "moses-cli",
   "version": "1.0.0",
-  "description": "Thou shalt not break master",
+  "description": "Thou shalt not break production",
   "type": "module",
   "bin": {
     "moses": "./dist/bin/moses.js",
@@ -11,13 +11,14 @@
     "node": ">=18"
   },
   "scripts": {
-    "build": "npm run check-types && rm -rf dist && tsc && mkdir -p dist/src/prompts && cp src/prompts/*.md dist/src/prompts/",
     "start": "node ./dist/bin/moses.js",
     "test": "echo \"No tests specified\"",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier . --write",
     "check-types": "tsc --noEmit",
+    "check": "pnpm format && pnpm lint && pnpm check-types",
+    "build": "rm -rf dist && tsc && mkdir -p dist/src/prompts && cp src/prompts/*.md dist/src/prompts/",
     "prepare": "husky"
   },
   "keywords": [
@@ -50,6 +51,7 @@
     "ora": "^8.1.1"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
     "@eslint/js": "^9.39.1",
     "@types/node": "^25.5.0",
     "@typescript-eslint/eslint-plugin": "^8.58.0",
