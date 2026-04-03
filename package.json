@@ -21,7 +21,7 @@
     "ai",
     "cli",
     "copilot",
-    "claude"
+    "gemini"
   ],
   "author": "stanleygomes",
   "license": "MIT",

@@ -25,26 +25,10 @@ export const AI_TOOLS = [
   {
     key: "copilot",
     name: "GitHub Copilot CLI (copilot)",
-    command: "gh",
-    args: ["copilot", "explain"],
+    command: "copilot",
+    args: ["-p"],
     install: "npm install -g @github/copilot",
     docs: "https://docs.github.com/copilot/github-copilot-in-the-cli",
-  },
-  {
-    key: "claude",
-    name: "Claude Code (claude)",
-    command: "claude",
-    args: ["--prompt"],
-    install: "npm install -g @anthropic-ai/claude-cli",
-    docs: "https://docs.anthropic.com/cli",
-  },
-  {
-    key: "chatgpt",
-    name: "ChatGPT CLI (chatgpt)",
-    command: "chatgpt",
-    args: [],
-    install: "npm install -g @openai/codex",
-    docs: "https://platform.openai.com/docs",
   },
   {
     key: "gemini",
