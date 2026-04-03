@@ -31,7 +31,7 @@ The command:
 3. Selects AI tool
 4. Selects feedback style (amigável, pragmático ou ofensivo)
 5. Defines maximum `changes_count` limit to protect token usage
-4. Saves config in `~/.config/moses/config.json` with mode `600`
+6. Saves config in `~/.config/moses/config.json` with mode `600`
 
 ## Usage
 

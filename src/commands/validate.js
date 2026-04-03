@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
+import { fileURLToPath } from 'node:url';
 import dayjs from 'dayjs';
 import { MESSAGES } from '../constants.js';
 import { runAiReview } from '../services/ai-tools.js';
@@ -25,7 +26,9 @@ function findGitlabConfig(config, host) {
 }
 
 async function readContextFile(fileName) {
-  const filePath = path.resolve(process.cwd(), 'src', 'context', fileName);
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const filePath = path.resolve(__dirname, '..', 'context', fileName);
   return fs.readFile(filePath, 'utf-8');
 }
 
@@ -35,7 +38,7 @@ function parseChangesCount(value) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-function notifyLinuxDone() {
+function notifyAnalysisCompleteOnLinux() {
   if (os.platform() !== 'linux') return;
   import('node:child_process')
     .then(({ spawn }) => {
@@ -122,9 +125,11 @@ export async function runValidate(url, options = {}) {
 
     const feedbackStyle = config.review?.feedbackStyle ?? 'pragmatic';
     const userPrompt = options.prompt ?? '';
-    const analysisSpinner = display.spinner(
-      'Running AI analysis (a Linux system notification will be sent when it finishes)...',
-    );
+    const notificationHint =
+      os.platform() === 'linux'
+        ? ' A Linux system notification will be sent when it finishes.'
+        : '';
+    const analysisSpinner = display.spinner(`Running AI analysis...${notificationHint}`);
     await new Promise((resolve, reject) => {
       runAiReview(
         config.ai?.tool ?? 'copilot',
@@ -147,7 +152,7 @@ export async function runValidate(url, options = {}) {
       );
     });
     analysisSpinner.succeed('AI analysis completed.');
-    notifyLinuxDone();
+    notifyAnalysisCompleteOnLinux();
     display.success('Review completed!');
   } catch (error) {
     markdownSpinner.fail('Failed to prepare prompt or run AI review.');
