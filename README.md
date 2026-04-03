@@ -8,6 +8,8 @@ CLI buddy to help you with code review of GitLab Merge Requests, by using AI too
 [![Node.js Version](https://img.shields.io/badge/node->=18-brightgreen.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+![moses-cli](https://raw.githubusercontent.com/stanleygomes/moses-cli/refs/heads/master/assets/screenshot.png)
+
 </div>
 
 ## Installation
