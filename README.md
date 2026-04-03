@@ -2,7 +2,7 @@
 
 # moses
 
-**moses** is a your CLI to help code review of GitLab Merge Requests using AI tools like GitHub Copilot, Claude, Codex CLI, Gemini CLI.
+**moses** is a your CLI to help code review of GitLab Merge Requests using AI tools like GitHub Copilot CLI and Gemini CLI.
 
 [![npm version](https://img.shields.io/npm/v/@moses-cli/core.svg)](https://www.npmjs.com/package/@moses-cli/core)
 [![Node.js Version](https://img.shields.io/badge/node->=18-brightgreen.svg)](https://nodejs.org/)
@@ -44,15 +44,15 @@ Flow:
 1. Parses MR URL
 2. Fetches MR data + diffs + commits from GitLab API
 3. Generates markdown in `~/.config/moses/reviews/`
-4. Sends content to configured AI tool
-5. Displays response in streaming mode on terminal
+4. Concatenates context files + optional prompt + MR diff and sends to configured AI tool
+5. Displays response in terminal with loading indicator
 
 ### Why moses?
 
 Like Moses guiding his people to the promised land, moses validates every merge request, ensuring your most precious asset—your code—reaches production safely.
 
 - ⚡ **Fast analysis**: Fetches diffs directly from GitLab API
-- 🤖 **Multi-AI**: Support for 5 leading AI tools
+- 🤖 **Multi-AI**: Focus on tested support for GitHub Copilot CLI and Gemini CLI
 - 🔒 **Secure**: Tokens stored with 600 permissions, never exposed
 - 📊 **Comprehensive**: Generates structured markdown with stats, commits, and diffs
 
@@ -62,7 +62,9 @@ Like Moses guiding his people to the promised land, moses validates every merge 
 - Support for multiple GitLab instances (gitlab.com + self-hosted)
 - Automatic validation of AI tool installation
 - Real-time streaming of AI analysis
-- Export diffs in Markdown with rich formatting
+- Configurable feedback style (amigável, pragmático, ofensivo)
+- Configurable diff changes limit with safe interruption
+- Optional extra prompt context in `moses validate`
 - Elegant error handling with contextual messages
 
 ## For local development
@@ -76,10 +78,27 @@ npm link
 
 | Tool              | CLI          | Installation                              |
 | ----------------- | ------------ | ----------------------------------------- |
-| GitHub Copilot    | `gh copilot` | `npm install -g @github/copilot`          |
-| Claude Code       | `claude`     | `npm install -g @anthropic-ai/claude-cli` |
-| Codex CLI         | `chatgpt`    | `npm install -g @openai/codex`            |
+| GitHub Copilot    | `copilot`    | `npm install -g @github/copilot`          |
 | Google Gemini CLI | `gemini`     | `npm install -g @google/gemini-cli`       |
+
+✅ These two CLIs are the ones currently tested in this project.
+
+🙏 Quer ajudar? Contribuições para suporte ao **Claude Code** e **Codex CLI** são muito bem-vindas.
+
+## ⚙️ Commands
+
+```bash
+moses init
+moses validate <mr-url> --prompt "contexto adicional opcional"
+moses set-feedback-style
+moses set-diff-limit
+```
+
+For GitHub Copilot, moses runs non-interactive mode with:
+
+```bash
+copilot -p "prompt"
+```
 
 ## 🤝 Como Contribuir
 
