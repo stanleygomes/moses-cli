@@ -9,7 +9,7 @@ export async function buildAndSaveConfig(
   gitlab: GitlabSetupData,
   ai: AiSetupData,
   existing: MosesConfig | null,
-): Promise<string> {
+): Promise<{ configPath: string; contextInfo: { contextDir: string; files: string[] } }> {
   const baseConfig: MosesConfig = existing ?? {
     version: CONFIG_VERSION,
     defaultGitlab: gitlab.name,
@@ -49,6 +49,6 @@ export async function buildAndSaveConfig(
   };
 
   const path = await saveConfig(config);
-  await ensureDefaultContextFiles();
-  return path;
+  const contextInfo = await ensureDefaultContextFiles();
+  return { configPath: path, contextInfo };
 }

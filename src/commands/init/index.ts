@@ -25,9 +25,12 @@ export async function runInit(): Promise<void> {
   const gitlabData = await promptGitlabSetup(existingConfig);
   const aiData = await promptAiSetup(existingConfig);
 
-  const configPath = await buildAndSaveConfig(gitlabData, aiData, existingConfig);
+  const { configPath, contextInfo } = await buildAndSaveConfig(gitlabData, aiData, existingConfig);
 
   display.success(MESSAGES.done);
   display.info(`📁 Config saved at ${configPath} (mode 600)`);
-  display.info(MESSAGES.next);
+  display.info(`📁 Context files saved at ${contextInfo.contextDir}:`);
+  contextInfo.files.forEach((file) => display.info(`   - ${file}`));
+
+  display.info(`\n${MESSAGES.next}`);
 }

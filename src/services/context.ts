@@ -13,7 +13,10 @@ export function getContextDir(): string {
   return resolveHome(DEFAULT_CONTEXT_DIR);
 }
 
-export async function ensureDefaultContextFiles(): Promise<void> {
+export async function ensureDefaultContextFiles(): Promise<{
+  contextDir: string;
+  files: string[];
+}> {
   const contextDir = getContextDir();
   await fs.mkdir(contextDir, { recursive: true });
 
@@ -28,6 +31,7 @@ export async function ensureDefaultContextFiles(): Promise<void> {
       await fs.copyFile(srcPath, destPath);
     }
   }
+  return { contextDir, files };
 }
 
 export async function readContextPrompt(extraPrompt = ''): Promise<string> {
