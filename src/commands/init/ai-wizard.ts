@@ -4,12 +4,37 @@ import * as display from '../../utils/display.js';
 import { validateToolInstallation } from '../../utils/tool-validator.js';
 import type { AiToolKey } from '../../types/AiToolKey.js';
 import type { FeedbackStyle } from '../../types/FeedbackStyle.js';
+import type { MosesConfig } from '../../types/MosesConfig.js';
 
-export async function chooseAiTool(): Promise<AiToolKey> {
+export interface AiSetupData {
+  tool: AiToolKey;
+  feedbackStyle: FeedbackStyle;
+  maxDiffChanges: number;
+}
+
+export async function promptAiSetup(existingConfig: MosesConfig | null): Promise<AiSetupData> {
+  display.section('🤖 AI TOOL CONFIGURATION');
+  display.info('💡 TIP: Moses uses local AI tools to process reviews. Make sure your chosen tool');
+  display.info('   is installed and configured with the necessary API keys.');
+
+  const tool = await chooseAiTool(existingConfig?.ai?.tool);
+
+  display.info('\n💡 Feedback Style: Choose how you want the AI to post comments on the MR.');
+  const feedbackStyle = await chooseFeedbackStyle(existingConfig?.ai?.feedbackStyle);
+
+  display.info('\n💡 Diff Limits: Large files can be slow and expensive (tokens).');
+  display.info('   This limit skips files with too many changes.');
+  const maxDiffChanges = await chooseMaxDiffChanges(existingConfig?.ai?.maxDiffChanges);
+
+  return { tool, feedbackStyle, maxDiffChanges };
+}
+
+export async function chooseAiTool(existingTool: AiToolKey | undefined): Promise<AiToolKey> {
   while (true) {
     const chosen = await select({
       message: 'Choose the AI tool for review:',
       choices: AI_TOOLS.map((tool) => ({ name: tool.name, value: tool.key })),
+      default: existingTool,
     });
 
     const toolInfo = AI_TOOLS.find((tool) => tool.key === chosen);

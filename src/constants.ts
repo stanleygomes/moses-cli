@@ -1,6 +1,6 @@
 import type { AiToolDefinition } from './types/AiToolDefinition.js';
 
-export const APP_NAME = 'moses';
+export const APP_NAME = 'moses cli';
 export const CONFIG_VERSION = '1';
 
 export const DEFAULT_CONFIG_DIR = '~/.moses-cli';

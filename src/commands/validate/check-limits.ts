@@ -8,7 +8,7 @@ export function isDiffWithinLimits(diffs: MergeRequestDiff[], config: MosesConfi
   const totalChanges = countDiffChanges(diffs);
   if (Number.isInteger(maxDiffChanges) && maxDiffChanges > 0 && totalChanges > maxDiffChanges) {
     display.warn(
-      `Diff interrompido: total de changes (${totalChanges}) excede o limite configurado (${maxDiffChanges}). Atualize o limite com: moses set-diff-limit`,
+      `Diff interrupted: total changes (${totalChanges}) exceeds the configured limit (${maxDiffChanges}). Update the limit with: moses set-diff-limit`,
     );
     return false;
   }

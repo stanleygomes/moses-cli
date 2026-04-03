@@ -41,7 +41,7 @@ export async function readContextPrompt(extraPrompt = ''): Promise<string> {
 
   const segments = contents.map((c) => c.trim());
   if (extraPrompt.trim()) {
-    segments.push(`# Contexto adicional do usuário\n${extraPrompt.trim()}`);
+    segments.push(`# Additional user context\n${extraPrompt.trim()}`);
   }
   return `${segments.join('\n\n')}\n`;
 }

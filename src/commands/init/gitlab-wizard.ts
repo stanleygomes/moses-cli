@@ -1,7 +1,52 @@
-import { input, select } from '@inquirer/prompts';
+import axios from 'axios';
+import { input, password, select } from '@inquirer/prompts';
 import { validateGitlabUrl } from '../../utils/url-parser.js';
 import * as display from '../../utils/display.js';
 import { validateToken } from '../../services/gitlab.js';
+import type { MosesConfig } from '../../types/MosesConfig.js';
+
+export interface GitlabSetupData {
+  name: string;
+  url: string;
+  token: string;
+}
+
+export async function promptGitlabSetup(
+  existingConfig: MosesConfig | null,
+): Promise<GitlabSetupData> {
+  display.section('📋 GITLAB CONFIGURATION');
+  display.info(
+    '💡 TIP: Use a nickname to Identify this GitLab config (e.g. "work", "gitlab-org").',
+  );
+  display.info('   You can run "init" again later to add more instances.');
+
+  const name = await input({
+    message: 'Instance nickname (e.g., "work", "gitlab-com" - to identify this GitLab config):',
+    default: existingConfig?.defaultGitlab ?? 'gitlab-main',
+  });
+
+  const url = await chooseGitlabBaseUrl();
+  const settingsBase = url.replace(/\/$/, '');
+  display.info(`💡 Create a new Personal Access Token with "api" scope here:`);
+  display.link(`${settingsBase}/-/user_settings/personal_access_tokens`);
+
+  let token = '';
+  while (true) {
+    token = await password({
+      message: 'Personal Access Token (scope: api):',
+      mask: '*',
+    });
+
+    try {
+      await validateGitlabToken(url, token);
+      break;
+    } catch {
+      // Just loop back on invalid token
+    }
+  }
+
+  return { name, url, token };
+}
 
 export async function chooseGitlabBaseUrl(): Promise<string> {
   const gitlabType = await select({
@@ -30,8 +75,11 @@ export async function validateGitlabToken(gitlabUrl: string, token: string) {
     tokenSpinner.succeed(`Valid token! User: @${user.username}`);
     return user;
   } catch (error: unknown) {
-    tokenSpinner.fail('Invalid or expired token.');
-    display.info('See: https://docs.gitlab.com/user/profile/personal_access_tokens/');
+    const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+    const message = status ? `Failed (Status ${status})` : 'Invalid or expired token.';
+    tokenSpinner.fail(message);
+    const settingsBase = gitlabUrl.replace(/\/$/, '');
+    display.link(`   ${settingsBase}/-/user_settings/personal_access_tokens`);
     throw error;
   }
 }

@@ -4,9 +4,9 @@ import type { FeedbackStyle } from '../types/FeedbackStyle.js';
 import type { RunAiReviewHandlers } from '../types/RunAiReviewHandlers.js';
 
 const FEEDBACK_STYLE_GUIDANCE: Record<FeedbackStyle, string> = {
-  friendly: 'Use um tom amigável, respeitoso e construtivo.',
-  pragmatic: 'Use um tom pragmático, direto e objetivo.',
-  offensive: 'Use um tom ofensivo conforme solicitado pelo usuário.',
+  friendly: 'Use a friendly, respectful, and constructive tone.',
+  pragmatic: 'Use a pragmatic, direct, and objective tone.',
+  offensive: 'Use an offensive tone as requested by the user.',
 };
 
 function buildPrompt(
@@ -17,10 +17,9 @@ function buildPrompt(
   const toneInstruction =
     FEEDBACK_STYLE_GUIDANCE[feedbackStyle] ?? FEEDBACK_STYLE_GUIDANCE.pragmatic;
   const context = options.contextPrompt?.trim();
-
   return `${context ? `${context}\n\n` : ''}${toneInstruction}
 
-Diff do Merge Request:
+Merge Request Diff:
 
 ${markdownContent}`;
 }

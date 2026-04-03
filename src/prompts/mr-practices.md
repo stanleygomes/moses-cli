@@ -1,17 +1,17 @@
-# Boas e más práticas para validar no MR
+# Good and bad practices to validate in the MR
 
-## Boas práticas
+## Good practices
 
-- Tratamento explícito de erros
-- Nomes claros para funções e variáveis
-- Código simples e legível
-- Validação de entradas do usuário
-- Logs úteis sem dados sensíveis
+- Explicit error handling
+- Clear names for functions and variables
+- Simple and readable code
+- User input validation
+- Useful logs without sensitive data
 
-## Más práticas
+## Bad practices
 
-- Falta de validação de input
-- Exposição de secrets/tokens em código/log
-- Trechos duplicados sem necessidade
-- Código morto ou não utilizado
-- Falta de tratamento de exceções
+- Lack of input validation
+- Exposure of secrets/tokens in code/logs
+- Unnecessarily duplicated snippets
+- Dead or unused code
+- Lack of exception handling

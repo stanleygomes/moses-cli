@@ -1,3 +1,4 @@
+import { DEFAULT_CONTEXT_DIR } from '../../constants.js';
 import { runAiReview } from '../../services/ai-tools.js';
 import { ensureDefaultContextFiles, readContextPrompt } from '../../services/context.js';
 import { buildMergeRequestMarkdown } from '../../services/markdown.js';
@@ -12,7 +13,7 @@ export async function runReviewTask(
   config: MosesConfig,
   options: ValidateOptions,
 ): Promise<void> {
-  const markdownSpinner = display.spinner('Preparando contexto e diff...');
+  const markdownSpinner = display.spinner('Preparing context and diff...');
   try {
     await ensureDefaultContextFiles();
     const contextPrompt = await readContextPrompt(options.prompt ?? '');
@@ -23,9 +24,9 @@ export async function runReviewTask(
       url,
     });
 
-    markdownSpinner.succeed('Contexto e diff preparados');
+    markdownSpinner.succeed(`Context and diff prepared (folder: ${DEFAULT_CONTEXT_DIR})`);
 
-    const reviewSpinner = display.spinner('Aguardando análise da IA...');
+    const reviewSpinner = display.spinner('Waiting for AI analysis...');
     display.info('\n🤖 Starting review with AI tool...');
     display.info('────────────────────────────────────────────────────────');
 
@@ -39,15 +40,15 @@ export async function runReviewTask(
         onStderr: (chunk: string) => display.streamLine(chunk),
         onClose: (code: number | null) => {
           if (code === 0) {
-            reviewSpinner.succeed('Análise concluída');
+            reviewSpinner.succeed('Analysis completed');
             resolve();
           } else {
-            reviewSpinner.fail('Falha na análise da IA');
+            reviewSpinner.fail('AI analysis failed');
             reject(new Error(`AI process exited with code ${String(code)}`));
           }
         },
         onError: (error: Error) => {
-          reviewSpinner.fail('Falha na análise da IA');
+          reviewSpinner.fail('AI analysis failed');
           reject(error);
         },
       });
