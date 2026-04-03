@@ -4,6 +4,7 @@ import { Command } from 'commander';
 import { runInit } from '../src/commands/init.js';
 import { runValidate } from '../src/commands/validate.js';
 import { runSetDiffLimit, runSetFeedbackStyle } from '../src/commands/update-config.js';
+import type { ValidateOptions } from '../src/types.js';
 
 const program = new Command();
 
@@ -19,10 +20,16 @@ program
   .description('Validate a GitLab Merge Request')
   .argument('<url>', 'GitLab Merge Request URL')
   .option('-p, --prompt <text>', 'Additional context prompt to send with MR diff')
-  .action((url, options) => runValidate(url, options));
+  .action((url: string, options: ValidateOptions) => runValidate(url, options));
 
-program.command('set-feedback-style').description('Update feedback style').action(runSetFeedbackStyle);
+program
+  .command('set-feedback-style')
+  .description('Update feedback style')
+  .action(runSetFeedbackStyle);
 
-program.command('set-diff-limit').description('Update max diff changes limit').action(runSetDiffLimit);
+program
+  .command('set-diff-limit')
+  .description('Update max diff changes limit')
+  .action(runSetDiffLimit);
 
-program.parseAsync(process.argv);
+void program.parseAsync(process.argv);

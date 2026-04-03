@@ -1,3 +1,4 @@
+import axios from 'axios';
 import dayjs from 'dayjs';
 import { MESSAGES } from '../constants.js';
 import { runAiReview } from '../services/ai-tools.js';
@@ -7,8 +8,9 @@ import { buildMergeRequestMarkdown, countDiffChanges } from '../services/markdow
 import { checkAndFixConfigPermissions, readConfig } from '../utils/config-store.js';
 import * as display from '../utils/display.js';
 import { parseMergeRequestUrl } from '../utils/url-parser.js';
+import type { GitlabInstance, MosesConfig, ValidateOptions } from '../types.js';
 
-function findGitlabConfig(config, host) {
+function findGitlabConfig(config: MosesConfig, host: string): GitlabInstance | null {
   const gitlabs = config.gitlabs ?? [];
   return (
     gitlabs.find((item) => {
@@ -18,15 +20,17 @@ function findGitlabConfig(config, host) {
       } catch {
         return false;
       }
-    }) ?? gitlabs.find((item) => item.default) ?? null
+    }) ??
+    gitlabs.find((item) => item.default) ??
+    null
   );
 }
 
-export async function runValidate(url, options = {}) {
+export async function runValidate(url: string, options: ValidateOptions = {}): Promise<void> {
   display.banner();
   display.info(`🔗 Analyzing: ${url}`);
 
-  let config;
+  let config: MosesConfig;
   try {
     config = await readConfig();
     const permissionStatus = await checkAndFixConfigPermissions();
@@ -41,8 +45,8 @@ export async function runValidate(url, options = {}) {
   let parsedUrl;
   try {
     parsedUrl = parseMergeRequestUrl(url);
-  } catch (error) {
-    display.error(error.message);
+  } catch (error: unknown) {
+    display.error(error instanceof Error ? error.message : 'Invalid Merge Request URL.');
     return;
   }
 
@@ -55,22 +59,29 @@ export async function runValidate(url, options = {}) {
   const spinner = display.spinner('Fetching MR data...');
   let data;
   try {
-    data = await getMergeRequestData(gitlabConfig.url, gitlabConfig.token, parsedUrl.projectId, parsedUrl.mrIid);
+    data = await getMergeRequestData(
+      gitlabConfig.url,
+      gitlabConfig.token,
+      parsedUrl.projectId,
+      parsedUrl.mrIid,
+    );
     spinner.succeed(`MR #${data.mr.iid} — "${data.mr.title}" loaded`);
-  } catch (error) {
+  } catch (error: unknown) {
     spinner.fail('Failed to fetch MR data.');
-    if (error?.response?.status === 404) {
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
       display.error('MR not found (404). Check URL and access (VPN, permissions).');
       return;
     }
-    display.error(`Error: ${error.message}`);
+    display.error(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     return;
   }
 
   display.info(`👤 Author:   ${data.mr.author?.name ?? data.mr.author?.username ?? 'unknown'}`);
   display.info(`🌿 Branch:   ${data.mr.source_branch} → ${data.mr.target_branch}`);
   display.info(`📅 Date:     ${dayjs(data.mr.created_at).format('YYYY-MM-DD')}`);
-  display.info(`📊 Stats:    ${data.diffs.length} files | changes_count: ${data.mr.changes_count ?? '?'}`);
+  display.info(
+    `📊 Stats:    ${data.diffs.length} files | changes_count: ${data.mr.changes_count ?? '?'}`,
+  );
 
   const maxDiffChanges = config.ai?.maxDiffChanges;
   const totalChanges = countDiffChanges(data.diffs);
@@ -98,24 +109,24 @@ export async function runValidate(url, options = {}) {
     display.info('\n🤖 Starting review with AI tool...');
     display.info('────────────────────────────────────────────────────────');
 
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       runAiReview(config.ai?.tool ?? 'copilot', markdown, {
         options: {
           feedbackStyle: config.ai?.feedbackStyle,
           contextPrompt,
         },
-        onStdout: (chunk) => display.streamLine(chunk),
-        onStderr: (chunk) => display.streamLine(chunk),
-        onClose: (code) => {
+        onStdout: (chunk: string) => display.streamLine(chunk),
+        onStderr: (chunk: string) => display.streamLine(chunk),
+        onClose: (code: number | null) => {
           if (code === 0) {
             reviewSpinner.succeed('Análise concluída');
             resolve();
           } else {
             reviewSpinner.fail('Falha na análise da IA');
-            reject(new Error(`AI process exited with code ${code}`));
+            reject(new Error(`AI process exited with code ${String(code)}`));
           }
         },
-        onError: (error) => {
+        onError: (error: Error) => {
           reviewSpinner.fail('Falha na análise da IA');
           reject(error);
         },
@@ -124,8 +135,8 @@ export async function runValidate(url, options = {}) {
 
     display.info('\n────────────────────────────────────────────────────────');
     display.success('Review completed!');
-  } catch (error) {
+  } catch (error: unknown) {
     markdownSpinner.fail('Failed to generate markdown or run AI review.');
-    display.error(error.message);
+    display.error(error instanceof Error ? error.message : 'Unknown error during AI review.');
   }
 }
