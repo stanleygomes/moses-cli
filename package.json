@@ -11,7 +11,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "build": "npm run check-types && tsc && mkdir -p dist/src && cp -R src/prompts dist/src/prompts",
+    "build": "npm run check-types && rm -rf dist && tsc && mkdir -p dist/src/prompts && cp src/prompts/*.md dist/src/prompts/",
     "start": "node ./dist/bin/moses.js",
     "test": "echo \"No tests specified\"",
     "lint": "eslint . --ext .ts",
