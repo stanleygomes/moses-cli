@@ -14,7 +14,11 @@ export function validateToolInstallation(toolKey) {
 
   try {
     const commandPath = execSync(`which ${tool.command}`, { stdio: 'pipe' }).toString().trim();
-    execSync(`${tool.command} --version`, { stdio: 'pipe' });
+    try {
+      execSync(`${tool.command} --version`, { stdio: 'pipe' });
+    } catch {
+      execSync(`${tool.command} --help`, { stdio: 'pipe' });
+    }
     return { installed: true, path: commandPath };
   } catch {
     return {

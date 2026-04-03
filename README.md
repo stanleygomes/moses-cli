@@ -43,7 +43,7 @@ Flow:
 
 1. Parses MR URL
 2. Fetches MR data + diffs + commits from GitLab API
-3. Generates markdown in `~/.config/moses/reviews/`
+3. Loads context markdown files from `~/.config/moses/context/`
 4. Concatenates context files + optional prompt + MR diff and sends to configured AI tool
 5. Displays response in terminal with loading indicator
 
