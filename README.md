@@ -2,7 +2,7 @@
 
 # moses
 
-**moses** is a your CLI to help code review of GitLab Merge Requests using AI tools like GitHub Copilot CLI and Gemini CLI.
+**moses** is your CLI to help code review of GitLab Merge Requests using AI tools like GitHub Copilot CLI and Gemini CLI.
 
 [![npm version](https://img.shields.io/npm/v/@moses-cli/core.svg)](https://www.npmjs.com/package/@moses-cli/core)
 [![Node.js Version](https://img.shields.io/badge/node->=18-brightgreen.svg)](https://nodejs.org/)
