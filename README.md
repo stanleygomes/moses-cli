@@ -111,5 +111,3 @@ Want to help? Contributions to support **Claude Code** and **Codex CLI** are ver
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
-
-Made with 🔥 by Lumen HQ
