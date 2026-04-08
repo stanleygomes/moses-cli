@@ -57,7 +57,7 @@ Flow:
 
 ### Why moses?
 
-Like Moses guiding his people to the promised land, moses validates every merge request, ensuring your most precious asset—your code—reaches production safely.
+Like Moses guiding his people to the promised land, moses validates every merge request, ensuring your most precious asset, your code, reaches production safely.
 
 - **Fast analysis**: Fetches diffs directly from GitLab API
 - **Multi-AI**: Focus on tested support for GitHub Copilot CLI and Gemini CLI

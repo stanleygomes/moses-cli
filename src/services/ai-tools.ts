@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process';
 import { AI_TOOLS } from '../constants/ai.constant.js';
-import type { FeedbackStyle } from '../types/FeedbackStyle.js';
-import type { RunAiReviewHandlers } from '../types/RunAiReviewHandlers.js';
+import type { FeedbackStyle } from '../types/feedback-style.type.js';
+import type { RunAiReviewHandlers } from '../types/run-ai-review-handlers.type.js';
 
 const FEEDBACK_STYLE_GUIDANCE: Record<FeedbackStyle, string> = {
   friendly: 'Use a friendly, respectful, and constructive tone.',

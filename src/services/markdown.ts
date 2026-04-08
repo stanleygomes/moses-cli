@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import type { MergeRequestBundle } from '../types/MergeRequestBundle.js';
-import type { MergeRequestDiff } from '../types/MergeRequestDiff.js';
+import type { MergeRequestBundle } from '../types/merge-request-bundle.type.js';
+import type { MergeRequestDiff } from '../types/merge-request-diff.type.js';
 
 interface BuildMergeRequestMarkdownInput {
   mr: MergeRequestBundle['mr'];

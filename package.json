@@ -4,8 +4,8 @@
   "description": "Thou shalt not break production",
   "type": "module",
   "bin": {
-    "moses": "./dist/bin/moses.js",
-    "lourran": "./dist/bin/moses.js"
+    "moses": "./dist/index.js",
+    "lourran": "./dist/index.js"
   },
   "engines": {
     "node": ">=18"

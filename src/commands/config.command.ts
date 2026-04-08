@@ -1,0 +1,19 @@
+import { BaseCommand } from './base.command.js';
+import { SetFeedbackStyleModule } from '../modules/config-module/set-feedback-style.module.js';
+import { SetDiffLimitModule } from '../modules/config-module/set-diff-limit.module.js';
+
+export class ConfigCommand extends BaseCommand {
+  public register(): void {
+    const config = this.program.command('config').description('Manage Moses configuration');
+
+    config
+      .command('feedback-style')
+      .description('Update AI feedback style on Merge Requests')
+      .action(() => SetFeedbackStyleModule.run());
+
+    config
+      .command('diff-limit')
+      .description('Update maximum allowed diff changes limit')
+      .action(() => SetDiffLimitModule.run());
+  }
+}
