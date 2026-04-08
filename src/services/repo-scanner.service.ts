@@ -1,14 +1,16 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { CONTEXT_FILE_PATTERNS } from '../constants/context.constant.js';
+import type { RepoContextResult } from '../types/repo-context-result.type.js';
 
 /**
  * Scans a repository directory for files matching the context patterns.
  * Returns the contents of these files formatted for LLM context.
  */
 export class RepoScanner {
-  static async scanRepoForContext(repoPath: string): Promise<string> {
+  static async scanRepoForContext(repoPath: string): Promise<RepoContextResult> {
     const contents: string[] = [];
+    const files: string[] = [];
 
     for (const pattern of CONTEXT_FILE_PATTERNS) {
       const fullPath = path.join(repoPath, pattern);
@@ -18,14 +20,18 @@ export class RepoScanner {
         if (stats.isFile()) {
           const fileContent = await fs.readFile(fullPath, 'utf-8');
           contents.push(`\n## File: ${pattern}\n\n${fileContent.trim()}`);
+          files.push(pattern);
         }
       } catch {
         // File doesn't exist or is not accessible, skip
       }
     }
 
-    if (contents.length === 0) return '';
+    if (contents.length === 0) return { content: '', files: [] };
 
-    return `\n# Internal Repository Context\n${contents.join('\n')}\n`;
+    return {
+      content: `\n# Internal Repository Context\n${contents.join('\n')}\n`,
+      files,
+    };
   }
 }

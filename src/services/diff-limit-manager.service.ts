@@ -8,7 +8,9 @@ import type { MosesConfig } from '../types/moses-config.type.js';
 export class DiffLimitManager {
   static async promptForLimit(currentLimit?: number): Promise<number> {
     const fallback =
-      Number.isInteger(currentLimit) && currentLimit! > 0 ? currentLimit : DEFAULT_MAX_DIFF_CHANGES;
+      Number.isInteger(currentLimit) && currentLimit! > 0
+        ? (currentLimit as number)
+        : DEFAULT_MAX_DIFF_CHANGES;
 
     return Prompt.ask<number>({
       message: 'Maximum allowed diff changes before interrupting validation:',

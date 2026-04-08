@@ -1,6 +1,6 @@
 import type { AiToolDefinition } from '../types/ai-tool-definition.type.js';
 
-export const DEFAULT_MAX_DIFF_CHANGES = 1200;
+export const DEFAULT_MAX_DIFF_CHANGES = 500;
 
 export const AI_TOOLS: AiToolDefinition[] = [
   {

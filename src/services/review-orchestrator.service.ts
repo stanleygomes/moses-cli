@@ -1,4 +1,3 @@
-import { DEFAULT_CONTEXT_DIR } from '../constants/paths.constant.js';
 import { AiReviewService } from './ai-review.service.js';
 import { ContextManager } from './context-manager.service.js';
 import { RepoScanner } from './repo-scanner.service.js';
@@ -19,13 +18,26 @@ export class ReviewOrchestrator {
   ): Promise<void> {
     const markdownSpinner = Display.spinner('Preparing context and diff...');
     try {
-      const contextPrompt = await ReviewOrchestrator.buildContextPrompt(
-        options.prompt ?? '',
-        repoPath,
-      );
+      const {
+        prompt: contextPrompt,
+        localFiles,
+        repoFiles,
+      } = await ReviewOrchestrator.buildContextPrompt(options.prompt ?? '', repoPath);
       const markdown = ReviewOrchestrator.buildReviewMarkdown(url, data);
 
-      markdownSpinner.succeed(`Context and diff prepared (folder: ${DEFAULT_CONTEXT_DIR})`);
+      const localInfo = localFiles.length > 0 ? `${localFiles.length} local` : 'no local';
+      const repoInfo = repoFiles.length > 0 ? `${repoFiles.join(', ')}` : 'no repository';
+
+      markdownSpinner.succeed(
+        `Context and diff prepared (files: ${localInfo}, repository: ${repoInfo})`,
+      );
+
+      if (repoPath && repoFiles.length === 0) {
+        Display.warn(
+          'No specific context files found in repository (e.g. copilot-instructions.md, README.md)',
+        );
+      }
+
       await ReviewOrchestrator.executeAiReview(config, markdown, contextPrompt);
     } catch (error: unknown) {
       markdownSpinner.fail('Failed to generate markdown or run AI review.');
@@ -36,26 +48,29 @@ export class ReviewOrchestrator {
   private static async buildContextPrompt(
     extraPrompt: string,
     repoPath: string | null,
-  ): Promise<string> {
+  ): Promise<{ prompt: string; localFiles: string[]; repoFiles: string[] }> {
     await ContextManager.ensureDefaultContextFiles();
-    const baseContext = await ContextManager.readContextPrompt(extraPrompt);
-    return ReviewOrchestrator.appendRepoContext(baseContext, repoPath);
+    const { prompt: baseContext, files: localFiles } =
+      await ContextManager.readContextPrompt(extraPrompt);
+    const { prompt, repoFiles } = await ReviewOrchestrator.appendRepoContext(baseContext, repoPath);
+
+    return { prompt, localFiles, repoFiles };
   }
 
   private static async appendRepoContext(
     baseContext: string,
     repoPath: string | null,
-  ): Promise<string> {
+  ): Promise<{ prompt: string; repoFiles: string[] }> {
     if (!repoPath) {
-      return baseContext;
+      return { prompt: baseContext, repoFiles: [] };
     }
 
-    const repoContext = await RepoScanner.scanRepoForContext(repoPath);
-    if (!repoContext) {
-      return baseContext;
-    }
+    const { content, files } = await RepoScanner.scanRepoForContext(repoPath);
 
-    return `${baseContext}\n${repoContext}`;
+    return {
+      prompt: content ? `${baseContext}\n${content}` : baseContext,
+      repoFiles: files,
+    };
   }
 
   private static buildReviewMarkdown(url: string, data: MergeRequestBundle): string {

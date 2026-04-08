@@ -1,4 +1,4 @@
-import { AI_TOOLS } from '../constants/ai.constant.js';
+import { AI_TOOLS, DEFAULT_MAX_DIFF_CHANGES } from '../constants/ai.constant.js';
 import { Display } from '../utils/display.util.js';
 import { ToolValidator } from '../utils/tool-validator.util.js';
 import { Prompt } from '../utils/prompt.util.js';
@@ -118,10 +118,15 @@ export class AiSetupWizard {
     return FeedbackStyleUtil.promptSelection(existingStyle);
   }
 
-  static async chooseMaxDiffChanges(existingLimit: number | undefined): Promise<number> {
+  static async chooseMaxDiffChanges(currentLimit: number | undefined): Promise<number> {
+    const fallback =
+      Number.isInteger(currentLimit) && currentLimit! > 0
+        ? (currentLimit as number)
+        : DEFAULT_MAX_DIFF_CHANGES;
+
     return Prompt.ask<number>({
       message: 'Maximum allowed diff changes before interrupting validation:',
-      default: String(existingLimit),
+      default: String(fallback),
       schema: diffLimitSchema,
     });
   }

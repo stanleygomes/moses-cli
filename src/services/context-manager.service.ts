@@ -23,11 +23,12 @@ export class ContextManager {
     return { contextDir, files };
   }
 
-  static async readContextPrompt(extraPrompt = ''): Promise<string> {
+  static async readContextPrompt(extraPrompt = ''): Promise<{ prompt: string; files: string[] }> {
     const contextDir = ContextManager.getContextDir();
     const mdFiles = await ContextManager.listMarkdownFiles(contextDir);
     const segments = await ContextManager.readTrimmedContents(contextDir, mdFiles);
-    return ContextManager.buildContextPrompt(segments, extraPrompt);
+    const prompt = ContextManager.buildContextPrompt(segments, extraPrompt);
+    return { prompt, files: mdFiles };
   }
 
   private static async ensureContextDirectory(contextDir: string): Promise<void> {
