@@ -23,6 +23,10 @@ export class FsUtil {
     return await fs.stat(path);
   }
 
+  static async deleteFile(path: string): Promise<void> {
+    await fs.unlink(path);
+  }
+
   static resolveHome(value: string): string {
     return value.replace(/^~(?=\/|$)/, os.homedir());
   }

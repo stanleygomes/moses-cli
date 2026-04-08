@@ -66,6 +66,11 @@ export class ConfigStore {
     );
   }
 
+  static async delete(): Promise<void> {
+    const configPath = ConfigStore.getConfigPath();
+    await FsUtil.deleteFile(configPath);
+  }
+
   private static getConfigPath(): string {
     return path.join(ConfigStore.getConfigDir(), 'config.json');
   }

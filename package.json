@@ -4,14 +4,14 @@
   "description": "Thou shalt not break production",
   "type": "module",
   "bin": {
-    "moses": "./dist/index.js",
-    "lourran": "./dist/index.js"
+    "moses": "./dist/src/index.js",
+    "lourran": "./dist/src/index.js"
   },
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "start": "node ./dist/bin/moses.js",
+    "start": "node ./dist/src/index.js",
     "test": "echo \"No tests specified\"",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
