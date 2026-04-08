@@ -1,6 +1,6 @@
-import { ConfigStore } from '../../store/config.store.js';
-import { Display } from '../../utils/display.util.js';
-import { GitlabListHandler } from '../../services/gitlab-list.handler.js';
+import { ConfigStore } from '../store/config.store.js';
+import { Display } from '../utils/display.util.js';
+import { GitlabListHandler } from '../services/gitlab-list.handler.js';
 
 export class GitlabListModule {
   static async run(): Promise<void> {

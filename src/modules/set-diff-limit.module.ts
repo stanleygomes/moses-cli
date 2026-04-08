@@ -1,6 +1,6 @@
-import { ConfigStore } from '../../store/config.store.js';
-import { Display } from '../../utils/display.util.js';
-import { DiffLimitHandler } from '../../services/diff-limit.handler.js';
+import { ConfigStore } from '../store/config.store.js';
+import { Display } from '../utils/display.util.js';
+import { DiffLimitHandler } from '../services/diff-limit.handler.js';
 
 export class SetDiffLimitModule {
   static async run(): Promise<void> {

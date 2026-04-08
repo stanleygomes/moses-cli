@@ -1,5 +1,5 @@
-import { GitlabListModule } from '../modules/gitlab-module/list.module.js';
-import { GitlabSwitchModule } from '../modules/gitlab-module/switch.module.js';
+import { GitlabListModule } from '../modules/gitlab-list.module.js';
+import { GitlabSwitchModule } from '../modules/gitlab-switch.module.js';
 import { BaseCommand } from './base.command.js';
 
 export class GitlabInstanceCommand extends BaseCommand {

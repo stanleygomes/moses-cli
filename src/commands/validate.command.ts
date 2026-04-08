@@ -1,6 +1,6 @@
 import type { ValidateOptions } from '../types/validate-options.type.js';
 import { BaseCommand } from './base.command.js';
-import { ValidateModule } from '../modules/validate-module/validate.module.js';
+import { ValidateModule } from '../modules/validate.module.js';
 
 export class ValidateCommand extends BaseCommand {
   public register(): void {

@@ -1,10 +1,10 @@
-import { Display } from '../../utils/display.util.js';
-import { ValidateGitlabDataProvider } from '../../services/fetch-mr-data.js';
-import { DiffLimitChecker } from '../../services/check-limits.js';
-import { ValidateReviewRunner } from '../../services/review.js';
-import { ValidateConfigHandler } from '../../services/validate-config.handler.js';
-import { RepositoryResolverHandler } from '../../services/repository-resolver.handler.js';
-import type { ValidateOptions } from '../../types/validate-options.type.js';
+import { Display } from '../utils/display.util.js';
+import { ValidateGitlabDataProvider } from '../services/fetch-mr-data.js';
+import { DiffLimitChecker } from '../services/check-limits.js';
+import { ValidateReviewRunner } from '../services/review.js';
+import { ValidateConfigHandler } from '../services/validate-config.handler.js';
+import { RepositoryResolverHandler } from '../services/repository-resolver.handler.js';
+import type { ValidateOptions } from '../types/validate-options.type.js';
 
 export class ValidateModule {
   static async run(url: string, options: ValidateOptions = {}): Promise<void> {

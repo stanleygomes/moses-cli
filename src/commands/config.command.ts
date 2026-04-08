@@ -1,6 +1,6 @@
 import { BaseCommand } from './base.command.js';
-import { SetFeedbackStyleModule } from '../modules/config-module/set-feedback-style.module.js';
-import { SetDiffLimitModule } from '../modules/config-module/set-diff-limit.module.js';
+import { SetFeedbackStyleModule } from '../modules/set-feedback-style.module.js';
+import { SetDiffLimitModule } from '../modules/set-diff-limit.module.js';
 
 export class ConfigCommand extends BaseCommand {
   public register(): void {

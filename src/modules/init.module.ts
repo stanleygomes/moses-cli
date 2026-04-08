@@ -1,8 +1,8 @@
-import { MESSAGES } from '../../constants/messages.constant.js';
-import { Display } from '../../utils/display.util.js';
-import { ConfigStore } from '../../store/config.store.js';
-import { Prompt } from '../../utils/prompt.util.js';
-import { WizardRunner } from '../../services/wizard-runner.js';
+import { MESSAGES } from '../constants/messages.constant.js';
+import { Display } from '../utils/display.util.js';
+import { ConfigStore } from '../store/config.store.js';
+import { Prompt } from '../utils/prompt.util.js';
+import { WizardRunner } from '../services/wizard-runner.js';
 
 export class InitModule {
   static async run(): Promise<void> {
