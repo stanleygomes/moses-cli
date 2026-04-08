@@ -38,14 +38,15 @@ export class GitOperationsService {
       return targetPath;
     }
 
-    const authUrl = GitOperationsService.buildAuthenticatedUrl(repoUrl, token);
     try {
-      GitOperationsService.runClone(authUrl, targetPath);
+      GitOperationsService.runClone(repoUrl, token, targetPath);
       return targetPath;
     } catch (error) {
-      throw new Error(
-        `Failed to clone repository: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      const errorMessage =
+        error instanceof Error
+          ? GitOperationsService.maskToken(error.message, token)
+          : String(error);
+      throw new Error(`Failed to clone repository: ${errorMessage}`);
     }
   }
 
@@ -78,13 +79,24 @@ export class GitOperationsService {
     }
   }
 
-  private static buildAuthenticatedUrl(repoUrl: string, token: string): string {
-    return repoUrl.replace(/^https:\/\//, `https://oauth2:${token}@`);
+  private static buildCloneEnv(token: string): Record<string, string | undefined> {
+    const basicAuth = Buffer.from(`oauth2:${token}`).toString('base64');
+    return {
+      ...process.env,
+      GIT_CONFIG_COUNT: '1',
+      GIT_CONFIG_KEY_0: 'http.extraHeader',
+      GIT_CONFIG_VALUE_0: `Authorization: Basic ${basicAuth}`,
+    };
   }
 
-  private static runClone(authUrl: string, targetPath: string): void {
-    execFileSync('git', ['clone', '--depth', '1', authUrl, targetPath], {
+  private static runClone(repoUrl: string, token: string, targetPath: string): void {
+    execFileSync('git', ['clone', '--depth', '1', repoUrl, targetPath], {
       stdio: 'inherit',
+      env: GitOperationsService.buildCloneEnv(token),
     });
+  }
+
+  private static maskToken(text: string, token: string): string {
+    return token ? text.replaceAll(token, '***') : text;
   }
 }
