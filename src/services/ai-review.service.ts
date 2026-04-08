@@ -1,14 +1,7 @@
 import { spawn } from 'node:child_process';
 import { AI_TOOLS } from '../constants/ai.constant.js';
-import type { FeedbackStyle } from '../types/feedback-style.type.js';
+import { FEEDBACK_STYLE_GUIDANCE } from '../constants/feedback.constant.js';
 import type { RunAiReviewHandlers } from '../types/run-ai-review-handlers.type.js';
-
-const FEEDBACK_STYLE_GUIDANCE: Record<FeedbackStyle, string> = {
-  friendly: 'Use a friendly, respectful, and constructive tone.',
-  pragmatic: 'Use a pragmatic, direct, and objective tone.',
-  offensive:
-    'Be a extremely harsh, blunt and ruthless code reviewer. Use a cynical and critical tone. If the code is bad, say it is "garbage", "trash" or "disposable". Do not sugarcoat anything. You are NOT allowed to insult the person/author, but you MUST be savage when reviewing the code quality.',
-};
 
 export class AiReviewService {
   private static buildPrompt(
