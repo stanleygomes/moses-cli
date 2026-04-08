@@ -1,6 +1,6 @@
 import { ConfigStore } from '../../store/config.store.js';
 import { Display } from '../../utils/display.util.js';
-import { GitlabSwitchHandler } from './helpers/gitlab-switch.handler.js';
+import { GitlabSwitchHandler } from '../../services/gitlab-switch.handler.js';
 
 export class GitlabSwitchModule {
   static async run(): Promise<void> {

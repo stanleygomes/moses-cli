@@ -1,7 +1,7 @@
-import { ConfigStore } from '../../../store/config.store.js';
-import { Display } from '../../../utils/display.util.js';
-import { Prompt } from '../../../utils/prompt.util.js';
-import type { MosesConfig } from '../../../types/moses-config.type.js';
+import { ConfigStore } from '../store/config.store.js';
+import { Display } from '../utils/display.util.js';
+import { Prompt } from '../utils/prompt.util.js';
+import type { MosesConfig } from '../types/moses-config.type.js';
 
 export class GitlabSwitchHandler {
   static displayNoInstances(): void {

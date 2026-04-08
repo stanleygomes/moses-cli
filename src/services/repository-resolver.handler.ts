@@ -1,9 +1,9 @@
-import { RepositoryService } from '../../../services/repository.js';
-import { UrlParser } from '../../../utils/url.util.js';
-import { ConfigStore } from '../../../store/config.store.js';
-import { Display } from '../../../utils/display.util.js';
-import { Prompt } from '../../../utils/prompt.util.js';
-import type { MosesConfig } from '../../../types/moses-config.type.js';
+import { RepositoryService } from './repository.js';
+import { UrlParser } from '../utils/url.util.js';
+import { ConfigStore } from '../store/config.store.js';
+import { Display } from '../utils/display.util.js';
+import { Prompt } from '../utils/prompt.util.js';
+import type { MosesConfig } from '../types/moses-config.type.js';
 
 export class RepositoryResolverHandler {
   static async resolveRepositoryPath(url: string, config: MosesConfig): Promise<string | null> {

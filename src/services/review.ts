@@ -1,12 +1,12 @@
-import { DEFAULT_CONTEXT_DIR } from '../../constants/paths.constant.js';
-import { AiReviewService } from '../../services/ai-tools.js';
-import { ContextService } from '../../services/context.js';
-import { ContextScannerService } from '../../services/context-scanner.js';
-import { MarkdownService } from '../../services/markdown.js';
-import { Display } from '../../utils/display.util.js';
-import type { MosesConfig } from '../../types/moses-config.type.js';
-import type { ValidateOptions } from '../../types/validate-options.type.js';
-import type { MergeRequestBundle } from '../../types/merge-request-bundle.type.js';
+import { DEFAULT_CONTEXT_DIR } from '../constants/paths.constant.js';
+import { AiReviewService } from './ai-tools.js';
+import { ContextService } from './context.js';
+import { ContextScannerService } from './context-scanner.js';
+import { MarkdownService } from './markdown.js';
+import { Display } from '../utils/display.util.js';
+import type { MosesConfig } from '../types/moses-config.type.js';
+import type { ValidateOptions } from '../types/validate-options.type.js';
+import type { MergeRequestBundle } from '../types/merge-request-bundle.type.js';
 
 export class ValidateReviewRunner {
   static async runReviewTask(

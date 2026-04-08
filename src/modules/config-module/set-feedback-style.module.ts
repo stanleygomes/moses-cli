@@ -1,6 +1,6 @@
 import { ConfigStore } from '../../store/config.store.js';
 import { Display } from '../../utils/display.util.js';
-import { FeedbackStyleHandler } from './helpers/feedback-style.handler.js';
+import { FeedbackStyleHandler } from '../../services/feedback-style.handler.js';
 
 export class SetFeedbackStyleModule {
   static async run(): Promise<void> {

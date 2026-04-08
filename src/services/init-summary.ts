@@ -1,5 +1,5 @@
-import { MESSAGES } from '../../../constants/messages.constant.js';
-import { Display } from '../../../utils/display.util.js';
+import { MESSAGES } from '../constants/messages.constant.js';
+import { Display } from '../utils/display.util.js';
 
 export class InitSummary {
   static display(configPath: string, contextInfo: { contextDir: string; files: string[] }): void {

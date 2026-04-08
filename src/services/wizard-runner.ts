@@ -1,10 +1,10 @@
-import { ConfigStore } from '../../../store/config.store.js';
-import { ContextService } from '../../../services/context.js';
+import { ConfigStore } from '../store/config.store.js';
+import { ContextService } from './context.js';
 import { GitlabWizard } from './gitlab-wizard.js';
 import { AiWizard } from './ai-wizard.js';
 import { InitConfigBuilder } from './config-builder.js';
 import { InitSummary } from './init-summary.js';
-import type { MosesConfig } from '../../../types/moses-config.type.js';
+import type { MosesConfig } from '../types/moses-config.type.js';
 
 export class WizardRunner {
   static async run(existingConfig: MosesConfig | null): Promise<void> {

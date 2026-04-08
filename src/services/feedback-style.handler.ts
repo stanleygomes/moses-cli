@@ -1,9 +1,9 @@
-import { FEEDBACK_STYLES } from '../../../constants/feedback.constant.js';
-import { ConfigStore } from '../../../store/config.store.js';
-import { Display } from '../../../utils/display.util.js';
-import { Prompt } from '../../../utils/prompt.util.js';
-import type { FeedbackStyle } from '../../../types/feedback-style.type.js';
-import type { MosesConfig } from '../../../types/moses-config.type.js';
+import { FEEDBACK_STYLES } from '../constants/feedback.constant.js';
+import { ConfigStore } from '../store/config.store.js';
+import { Display } from '../utils/display.util.js';
+import { Prompt } from '../utils/prompt.util.js';
+import type { FeedbackStyle } from '../types/feedback-style.type.js';
+import type { MosesConfig } from '../types/moses-config.type.js';
 
 export class FeedbackStyleHandler {
   static async promptForStyle(currentStyle?: FeedbackStyle): Promise<FeedbackStyle> {

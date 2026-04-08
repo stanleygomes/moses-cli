@@ -1,7 +1,7 @@
-import { MarkdownService } from '../../services/markdown.js';
-import { Display } from '../../utils/display.util.js';
-import type { MosesConfig } from '../../types/moses-config.type.js';
-import type { MergeRequestDiff } from '../../types/merge-request-diff.type.js';
+import { MarkdownService } from './markdown.js';
+import { Display } from '../utils/display.util.js';
+import type { MosesConfig } from '../types/moses-config.type.js';
+import type { MergeRequestDiff } from '../types/merge-request-diff.type.js';
 
 export class DiffLimitChecker {
   static isDiffWithinLimits(diffs: MergeRequestDiff[], config: MosesConfig): boolean {

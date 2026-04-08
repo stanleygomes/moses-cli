@@ -1,10 +1,10 @@
 import axios from 'axios';
 import dayjs from 'dayjs';
-import { GitlabService } from '../../services/gitlab.js';
-import { ConfigStore } from '../../store/config.store.js';
-import { Display } from '../../utils/display.util.js';
-import { UrlParser } from '../../utils/url.util.js';
-import type { MosesConfig } from '../../types/moses-config.type.js';
+import { GitlabService } from './gitlab.js';
+import { ConfigStore } from '../store/config.store.js';
+import { Display } from '../utils/display.util.js';
+import { UrlParser } from '../utils/url.util.js';
+import type { MosesConfig } from '../types/moses-config.type.js';
 
 export class ValidateGitlabDataProvider {
   static async fetchMrData(url: string, config: MosesConfig) {

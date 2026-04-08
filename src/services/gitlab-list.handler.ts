@@ -1,6 +1,6 @@
-import { Display } from '../../../utils/display.util.js';
-import type { MosesConfig } from '../../../types/moses-config.type.js';
-import type { GitlabInstance } from '../../../types/gitlab-instance.type.js';
+import { Display } from '../utils/display.util.js';
+import type { MosesConfig } from '../types/moses-config.type.js';
+import type { GitlabInstance } from '../types/gitlab-instance.type.js';
 
 export class GitlabListHandler {
   static displayNoInstances(): void {

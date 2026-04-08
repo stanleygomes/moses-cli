@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { z } from 'zod';
-import { UrlParser } from '../../../utils/url.util.js';
-import { Display } from '../../../utils/display.util.js';
-import { Prompt } from '../../../utils/prompt.util.js';
-import { GitlabService } from '../../../services/gitlab.js';
-import type { MosesConfig } from '../../../types/moses-config.type.js';
+import { UrlParser } from '../utils/url.util.js';
+import { Display } from '../utils/display.util.js';
+import { Prompt } from '../utils/prompt.util.js';
+import { GitlabService } from './gitlab.js';
+import type { MosesConfig } from '../types/moses-config.type.js';
 
 export interface GitlabSetupData {
   name: string;

@@ -1,12 +1,12 @@
-import { AI_TOOLS } from '../../../constants/ai.constant.js';
-import { FEEDBACK_STYLES } from '../../../constants/feedback.constant.js';
-import { Display } from '../../../utils/display.util.js';
-import { ToolValidator } from '../../../utils/tool-validator.util.js';
-import { Prompt } from '../../../utils/prompt.util.js';
-import { diffLimitSchema } from '../../../validators/diff-limit.validator.js';
-import type { AiToolKey } from '../../../types/ai-tool-key.type.js';
-import type { FeedbackStyle } from '../../../types/feedback-style.type.js';
-import type { MosesConfig } from '../../../types/moses-config.type.js';
+import { AI_TOOLS } from '../constants/ai.constant.js';
+import { FEEDBACK_STYLES } from '../constants/feedback.constant.js';
+import { Display } from '../utils/display.util.js';
+import { ToolValidator } from '../utils/tool-validator.util.js';
+import { Prompt } from '../utils/prompt.util.js';
+import { diffLimitSchema } from '../validators/diff-limit.validator.js';
+import type { AiToolKey } from '../types/ai-tool-key.type.js';
+import type { FeedbackStyle } from '../types/feedback-style.type.js';
+import type { MosesConfig } from '../types/moses-config.type.js';
 
 export interface AiSetupData {
   tool: AiToolKey;
