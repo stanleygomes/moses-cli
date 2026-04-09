@@ -2,9 +2,10 @@ import dayjs from 'dayjs';
 import chalk from 'chalk';
 import { AiReviewService } from './ai-review.service.js';
 import { ContextManager } from './context-manager.service.js';
-import { RepoScanner } from './repo-scanner.service.js';
 import { MrMarkdownFormatter } from './mr-markdown-formatter.service.js';
 import { Display } from '../utils/display.util.js';
+import { RepoUtil } from '../utils/repo.util.js';
+import { CONTEXT_FILE_PATTERNS } from '../constants/context.constant.js';
 import { ErrorUtil } from '../utils/error.util.js';
 import type { MosesConfig } from '../types/moses-config.type.js';
 import type { ValidateOptions } from '../types/validate-options.type.js';
@@ -113,11 +114,18 @@ export class ReviewOrchestrator {
       return { prompt: baseContext, repoFiles: [] };
     }
 
-    const { content, files } = await RepoScanner.scanRepoForContext(repoPath);
+    const fileContents = await RepoUtil.readFiles(repoPath, CONTEXT_FILE_PATTERNS);
+
+    if (fileContents.length === 0) {
+      return { prompt: baseContext, repoFiles: [] };
+    }
+
+    const sections = fileContents.map((fc) => `\n## File: ${fc.path}\n\n${fc.content}`);
+    const content = `\n# Internal Repository Context\n${sections.join('\n')}\n`;
 
     return {
-      prompt: content ? `${baseContext}\n${content}` : baseContext,
-      repoFiles: files,
+      prompt: `${baseContext}\n${content}`,
+      repoFiles: fileContents.map((fc) => fc.path),
     };
   }
 
