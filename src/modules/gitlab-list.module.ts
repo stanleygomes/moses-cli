@@ -1,10 +1,10 @@
 import { ConfigStore } from '../store/config.store.js';
-import { Display } from '../utils/display.util.js';
+import { DisplayUtil } from '../utils/display.util.js';
 import { GitlabInstanceManager } from '../services/gitlab/gitlab-instance-manager.service.js';
 
 export class GitlabListModule {
   static async run(): Promise<void> {
-    Display.banner();
+    DisplayUtil.banner();
 
     try {
       const config = await ConfigStore.get();

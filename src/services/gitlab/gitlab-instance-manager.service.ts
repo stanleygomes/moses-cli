@@ -1,4 +1,4 @@
-import { Display } from '../../utils/display.util.js';
+import { DisplayUtil } from '../../utils/display.util.js';
 import { Prompt } from '../../utils/prompt.util.js';
 import { ConfigUpdateService } from '../config-update.service.js';
 import { ErrorUtil } from '../../utils/error.util.js';
@@ -8,27 +8,27 @@ import type { GitlabInstance } from '../../types/gitlab-instance.type.js';
 
 export class GitlabInstanceManager {
   static displayNoInstances(): void {
-    Display.warn('No GitLab instances configured.');
-    Display.info('Run "moses init" to add a new instance.');
+    DisplayUtil.warn('No GitLab instances configured.');
+    DisplayUtil.info('Run "moses init" to add a new instance.');
   }
 
   static displayInstances(config: MosesConfig): void {
-    Display.section('📋 CONFIGURED GITLAB INSTANCES');
+    DisplayUtil.section('📋 CONFIGURED GITLAB INSTANCES');
 
     config.gitlabs.forEach((gitlab) => {
       GitlabInstanceManager.displayInstanceDetails(gitlab, gitlab.name === config.defaultGitlab);
     });
 
-    Display.info('TIP: You can use "moses gitlab default" to change the default instance.');
+    DisplayUtil.info('TIP: You can use "moses gitlab default" to change the default instance.');
   }
 
   private static displayInstanceDetails(gitlab: GitlabInstance, isDefault: boolean): void {
     const indicator = isDefault ? '⭐️ ' : '🔹 ';
     const label = isDefault ? ' (DEFAULT)' : '';
 
-    Display.info(`${indicator}${gitlab.name}${label}`);
-    Display.info(`   URL: ${gitlab.url}`);
-    Display.info(`   Token: ${TokenUtil.mask(gitlab.token)}`);
+    DisplayUtil.info(`${indicator}${gitlab.name}${label}`);
+    DisplayUtil.info(`   URL: ${gitlab.url}`);
+    DisplayUtil.info(`   Token: ${TokenUtil.mask(gitlab.token)}`);
 
     console.log('');
   }
@@ -55,7 +55,7 @@ export class GitlabInstanceManager {
       defaultGitlab: nextDefault,
       gitlabs: GitlabInstanceManager.markDefaultGitlab(current.gitlabs, nextDefault),
     }));
-    Display.success(`Default GitLab switched to: ${nextDefault}`);
+    DisplayUtil.success(`Default GitLab switched to: ${nextDefault}`);
   }
 
   static handleLoadError(error: unknown): void {
@@ -63,11 +63,11 @@ export class GitlabInstanceManager {
   }
 
   static handleSwitchError(error: unknown): void {
-    Display.error('Could not switch GitLab instance.');
-    Display.error(ErrorUtil.getMessage(error));
+    DisplayUtil.error('Could not switch GitLab instance.');
+    DisplayUtil.error(ErrorUtil.getMessage(error));
 
     if (error instanceof Error && (error as { code?: string }).code === 'ENOENT') {
-      Display.info('Run "moses init" to create a configuration first.');
+      DisplayUtil.info('Run "moses init" to create a configuration first.');
     } else {
       console.log(error);
     }

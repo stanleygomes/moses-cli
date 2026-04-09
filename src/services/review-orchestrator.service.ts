@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import { AiReviewService } from './ai-review.service.js';
 import { ContextManager } from './context-manager.service.js';
 import { MrMarkdownFormatter } from './mr-markdown-formatter.service.js';
-import { Display } from '../utils/display.util.js';
+import { DisplayUtil } from '../utils/display.util.js';
 import { RepoUtil } from '../utils/repo.util.js';
 import { CONTEXT_FILE_PATTERNS } from '../constants/context.constant.js';
 import { ErrorUtil } from '../utils/error.util.js';
@@ -19,7 +19,7 @@ export class ReviewOrchestrator {
     options: ValidateOptions,
     repoPath: string | null = null,
   ): Promise<void> {
-    const markdownSpinner = Display.spinner('Preparing context and diff...');
+    const markdownSpinner = DisplayUtil.spinner('Preparing context and diff...');
     try {
       const {
         prompt: contextPrompt,
@@ -37,7 +37,7 @@ export class ReviewOrchestrator {
       ReviewOrchestrator.displayContextBrief(localFiles, repoFiles, options.prompt);
 
       if (repoPath && repoFiles.length === 0) {
-        Display.warn(
+        DisplayUtil.warn(
           'No specific context files found in repository (e.g. copilot-instructions.md, README.md)',
         );
       }
@@ -46,7 +46,7 @@ export class ReviewOrchestrator {
       await ReviewOrchestrator.executeAiReview(config, markdown, contextPrompt);
     } catch (error: unknown) {
       markdownSpinner.fail('Failed to generate markdown or run AI review.');
-      Display.error(ErrorUtil.getMessage(error, 'Unknown error during AI review.'));
+      DisplayUtil.error(ErrorUtil.getMessage(error, 'Unknown error during AI review.'));
     }
   }
 
@@ -61,7 +61,7 @@ export class ReviewOrchestrator {
       `${chalk.bold('URL:')}    ${chalk.dim(url)}`,
     ].join('\n');
 
-    Display.box(details, 'Merge Request Details', 'magenta');
+    DisplayUtil.box(details, 'Merge Request Details', 'magenta');
   }
 
   private static displayContextBrief(
@@ -91,7 +91,7 @@ export class ReviewOrchestrator {
       sections.push(chalk.dim('No extra context provided.'));
     }
 
-    Display.box(sections.join('\n\n'), 'Context & Instructions', 'blue');
+    DisplayUtil.box(sections.join('\n\n'), 'Context & Instructions', 'blue');
   }
 
   private static async buildContextPrompt(
@@ -143,14 +143,14 @@ export class ReviewOrchestrator {
     markdown: string,
     contextPrompt: string,
   ): Promise<void> {
-    const reviewSpinner = Display.spinner('Connecting to AI tool...');
+    const reviewSpinner = DisplayUtil.spinner('Connecting to AI tool...');
 
     await new Promise<void>((resolve, reject) => {
       let firstChunk = true;
       const stopSpinnerOnStart = () => {
         if (firstChunk) {
           reviewSpinner.stop();
-          Display.section('AI Analysis Response');
+          DisplayUtil.section('AI Analysis Response');
           firstChunk = false;
         }
       };
@@ -162,16 +162,16 @@ export class ReviewOrchestrator {
         },
         onStdout: (chunk: string) => {
           stopSpinnerOnStart();
-          Display.stream(chunk);
+          DisplayUtil.stream(chunk);
         },
         onStderr: (chunk: string) => {
           stopSpinnerOnStart();
-          Display.stream(chunk);
+          DisplayUtil.stream(chunk);
         },
         onClose: (code: number | null) => {
           if (code === 0) {
             console.log('\n');
-            Display.success('Analysis completed successfully');
+            DisplayUtil.success('Analysis completed successfully');
             resolve();
           } else {
             console.log('\n');

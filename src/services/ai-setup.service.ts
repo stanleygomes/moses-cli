@@ -1,5 +1,5 @@
 import { AI_TOOLS, DEFAULT_MAX_DIFF_CHANGES } from '../constants/ai.constant.js';
-import { Display } from '../utils/display.util.js';
+import { DisplayUtil } from '../utils/display.util.js';
 import { ToolValidator } from '../utils/tool-validator.util.js';
 import { Prompt } from '../utils/prompt.util.js';
 import { AiToolUtil } from '../utils/ai-tool.util.js';
@@ -41,7 +41,7 @@ export class AiSetupWizard {
       const validation = AiSetupWizard.validateAiToolInstallation(toolInfo);
 
       if (validation.installed && validation.path) {
-        Display.success(`${toolInfo.name} found at ${validation.path}`);
+        DisplayUtil.success(`${toolInfo.name} found at ${validation.path}`);
         return chosen;
       }
 
@@ -60,20 +60,20 @@ export class AiSetupWizard {
   }
 
   private static displayIntro(): void {
-    Display.section('🤖 AI TOOL CONFIGURATION');
-    Display.info(
+    DisplayUtil.section('🤖 AI TOOL CONFIGURATION');
+    DisplayUtil.info(
       '💡 TIP: Moses uses local AI tools to process reviews. Make sure your chosen tool',
     );
-    Display.info('   is installed and configured with the necessary API keys.');
+    DisplayUtil.info('   is installed and configured with the necessary API keys.');
   }
 
   private static displayFeedbackStyleTip(): void {
-    Display.info('\n💡 Feedback Style: Choose how you want the AI to post comments on the MR.');
+    DisplayUtil.info('\n💡 Feedback Style: Choose how you want the AI to post comments on the MR.');
   }
 
   private static displayDiffLimitTip(): void {
-    Display.info('\n💡 Diff Limits: Large files can be slow and expensive (tokens).');
-    Display.info('   This limit skips files with too many changes.');
+    DisplayUtil.info('\n💡 Diff Limits: Large files can be slow and expensive (tokens).');
+    DisplayUtil.info('   This limit skips files with too many changes.');
   }
 
   private static async promptAiTool(existingTool: AiToolKey | undefined): Promise<AiToolKey> {
@@ -89,7 +89,7 @@ export class AiSetupWizard {
   }
 
   private static validateAiToolInstallation(toolInfo: { key: AiToolKey; name: string }) {
-    const toolSpinner = Display.spinner(`Checking ${toolInfo.name} installation...`);
+    const toolSpinner = DisplayUtil.spinner(`Checking ${toolInfo.name} installation...`);
     const validation = ToolValidator.validateToolInstallation(toolInfo.key);
     toolSpinner.stop();
     return validation;
@@ -100,9 +100,9 @@ export class AiSetupWizard {
     installCmd: string | undefined,
     installUrl: string,
   ): void {
-    Display.error(`${toolInfo.name} not found!`);
-    Display.info(`\n📦 Install with:\n   ${installCmd ?? toolInfo.install}`);
-    Display.info(`\n📖 Documentation: ${installUrl}\n`);
+    DisplayUtil.error(`${toolInfo.name} not found!`);
+    DisplayUtil.info(`\n📦 Install with:\n   ${installCmd ?? toolInfo.install}`);
+    DisplayUtil.info(`\n📖 Documentation: ${installUrl}\n`);
   }
 
   private static async askRetryToolSelection(): Promise<boolean> {

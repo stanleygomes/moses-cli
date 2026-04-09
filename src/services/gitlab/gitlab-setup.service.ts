@@ -1,7 +1,7 @@
 import { HttpUtil } from '../../utils/http.util.js';
 import { z } from 'zod';
 import { UrlParser } from '../../utils/url.util.js';
-import { Display } from '../../utils/display.util.js';
+import { DisplayUtil } from '../../utils/display.util.js';
 import { Prompt } from '../../utils/prompt.util.js';
 import { GitlabClient } from '../../api/gitlab/gitlab.client.js';
 import type { MosesConfig } from '../../types/moses-config.type.js';
@@ -29,7 +29,7 @@ export class GitlabSetupWizard {
   }
 
   static async validateGitlabToken(gitlabUrl: string, token: string) {
-    const tokenSpinner = Display.spinner('Validating token...');
+    const tokenSpinner = DisplayUtil.spinner('Validating token...');
     try {
       const gitlab = new GitlabClient(gitlabUrl, token);
       const user = await gitlab.users.getCurrentUser();
@@ -40,17 +40,17 @@ export class GitlabSetupWizard {
       const message = status ? `Failed (Status ${status})` : 'Invalid or expired token.';
       tokenSpinner.fail(message);
       const settingsBase = UrlParser.normalizeBaseUrl(gitlabUrl);
-      Display.link(`   ${settingsBase}/-/user_settings/personal_access_tokens`);
+      DisplayUtil.link(`   ${settingsBase}/-/user_settings/personal_access_tokens`);
       throw error;
     }
   }
 
   private static displayIntro(): void {
-    Display.section('📋 GITLAB CONFIGURATION');
-    Display.info(
+    DisplayUtil.section('📋 GITLAB CONFIGURATION');
+    DisplayUtil.info(
       '💡 TIP: Use a nickname to Identify this GitLab config (e.g. "work", "gitlab-org").',
     );
-    Display.info('   You can run "init" again later to add more instances.');
+    DisplayUtil.info('   You can run "init" again later to add more instances.');
   }
 
   private static async promptInstanceName(existingConfig: MosesConfig | null): Promise<string> {
@@ -83,8 +83,8 @@ export class GitlabSetupWizard {
 
   private static displayTokenHelp(url: string): void {
     const settingsBase = UrlParser.normalizeBaseUrl(url);
-    Display.info('💡 Create a new Personal Access Token with "api" scope here:');
-    Display.link(`${settingsBase}/-/user_settings/personal_access_tokens`);
+    DisplayUtil.info('💡 Create a new Personal Access Token with "api" scope here:');
+    DisplayUtil.link(`${settingsBase}/-/user_settings/personal_access_tokens`);
   }
 
   private static async promptValidatedToken(url: string): Promise<string> {

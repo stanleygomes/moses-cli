@@ -1,13 +1,13 @@
 import { MESSAGES } from '../constants/messages.constant.js';
-import { Display } from '../utils/display.util.js';
+import { DisplayUtil } from '../utils/display.util.js';
 
 export class ConfigSummary {
   static display(configPath: string, contextInfo: { contextDir: string; files: string[] }): void {
-    Display.success(MESSAGES.done);
-    Display.info(`📁 Config saved at ${configPath} (mode 600)`);
-    Display.info(`📁 Context files saved at ${contextInfo.contextDir}:`);
-    contextInfo.files.forEach((file) => Display.info(`   - ${file}`));
+    DisplayUtil.success(MESSAGES.done);
+    DisplayUtil.info(`📁 Config saved at ${configPath} (mode 600)`);
+    DisplayUtil.info(`📁 Context files saved at ${contextInfo.contextDir}:`);
+    contextInfo.files.forEach((file) => DisplayUtil.info(`   - ${file}`));
 
-    Display.info(`\n${MESSAGES.next}`);
+    DisplayUtil.info(`\n${MESSAGES.next}`);
   }
 }

@@ -5,7 +5,7 @@ import type { MosesConfig } from '../types/moses-config.type.js';
 import { FsUtil } from '../utils/fs.util.js';
 import { JsonUtil } from '../utils/json.util.js';
 
-import { Display } from '../utils/display.util.js';
+import { DisplayUtil } from '../utils/display.util.js';
 
 export class ConfigStore {
   static async get(): Promise<MosesConfig> {
@@ -33,7 +33,7 @@ export class ConfigStore {
 
       if (mode !== 0o600) {
         await FsUtil.setPermissions(configPath, 0o600);
-        Display.warn(`Permissions were automatically fixed to 600 at ${configPath}`);
+        DisplayUtil.warn(`Permissions were automatically fixed to 600 at ${configPath}`);
       }
     } catch {
       // Ignore if file doesn't exist

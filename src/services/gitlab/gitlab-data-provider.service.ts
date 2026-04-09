@@ -1,7 +1,7 @@
 import { HttpUtil } from '../../utils/http.util.js';
 import { GitlabClient } from '../../api/gitlab/gitlab.client.js';
 import { ConfigStore } from '../../store/config.store.js';
-import { Display } from '../../utils/display.util.js';
+import { DisplayUtil } from '../../utils/display.util.js';
 import { ErrorUtil } from '../../utils/error.util.js';
 import { UrlParser } from '../../utils/url.util.js';
 import type { MosesConfig } from '../../types/moses-config.type.js';
@@ -17,7 +17,7 @@ export class GitlabDataProvider {
     const gitlabConfig = ConfigStore.findGitlabInstance(config, parsedUrl.host);
 
     if (!gitlabConfig) {
-      Display.error(`No GitLab instance configured for host: ${parsedUrl.host}`);
+      DisplayUtil.error(`No GitLab instance configured for host: ${parsedUrl.host}`);
       return null;
     }
 
@@ -33,7 +33,7 @@ export class GitlabDataProvider {
     try {
       return UrlParser.parseMergeRequestUrl(url);
     } catch (error: unknown) {
-      Display.error(ErrorUtil.getMessage(error, 'Invalid Merge Request URL.'));
+      DisplayUtil.error(ErrorUtil.getMessage(error, 'Invalid Merge Request URL.'));
       return null;
     }
   }
@@ -44,7 +44,7 @@ export class GitlabDataProvider {
     projectId: string,
     mrIid: string,
   ) {
-    const spinner = Display.spinner('Fetching MR data...');
+    const spinner = DisplayUtil.spinner('Fetching MR data...');
     try {
       const gitlab = new GitlabClient(baseUrl, token);
       const data = await gitlab.mergeRequests.getBundle(projectId, mrIid);
@@ -60,10 +60,10 @@ export class GitlabDataProvider {
     spinner.fail('Failed to fetch MR data.');
 
     if (HttpUtil.getStatus(error) === 404) {
-      Display.error('MR not found (404). Check URL and access (VPN, permissions).');
+      DisplayUtil.error('MR not found (404). Check URL and access (VPN, permissions).');
       return;
     }
 
-    Display.error(`Error: ${ErrorUtil.getMessage(error)}`);
+    DisplayUtil.error(`Error: ${ErrorUtil.getMessage(error)}`);
   }
 }

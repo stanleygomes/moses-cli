@@ -1,14 +1,14 @@
 import { DEFAULT_MAX_DIFF_CHANGES } from '../constants/ai.constant.js';
 import { ConfigUpdateService } from '../services/config-update.service.js';
 import { ConfigStore } from '../store/config.store.js';
-import { Display } from '../utils/display.util.js';
+import { DisplayUtil } from '../utils/display.util.js';
 import { ErrorUtil } from '../utils/error.util.js';
 import { Prompt } from '../utils/prompt.util.js';
 import { diffLimitSchema } from '../validators/diff-limit.validator.js';
 
 export class SetDiffLimitModule {
   static async run(): Promise<void> {
-    Display.banner();
+    DisplayUtil.banner();
 
     try {
       const config = await ConfigStore.get();

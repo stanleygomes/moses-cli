@@ -5,13 +5,13 @@ import { ConfigSummary } from '../services/config-summary.service.js';
 import { ContextManager } from '../services/context-manager.service.js';
 import { GitlabSetupWizard } from '../services/gitlab/gitlab-setup.service.js';
 import { ConfigStore } from '../store/config.store.js';
-import { Display } from '../utils/display.util.js';
+import { DisplayUtil } from '../utils/display.util.js';
 import { Prompt } from '../utils/prompt.util.js';
 
 export class InitModule {
   static async run(): Promise<void> {
-    Display.banner();
-    Display.info(MESSAGES.welcome);
+    DisplayUtil.banner();
+    DisplayUtil.info(MESSAGES.welcome);
 
     const existingConfig = await ConfigStore.getSafe();
 
@@ -21,7 +21,7 @@ export class InitModule {
     });
 
     if (existingConfig && !confirmOverwrite) {
-      Display.info('No changes applied.');
+      DisplayUtil.info('No changes applied.');
       return;
     }
 

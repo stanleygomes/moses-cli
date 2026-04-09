@@ -1,4 +1,4 @@
-import { Display } from '../utils/display.util.js';
+import { DisplayUtil } from '../utils/display.util.js';
 import { GitlabDataProvider } from '../services/gitlab/gitlab-data-provider.service.js';
 import { UsageLimitUtil } from '../utils/usage-limit.util.js';
 import { ReviewOrchestrator } from '../services/review-orchestrator.service.js';
@@ -8,7 +8,7 @@ import type { ValidateOptions } from '../types/validate-options.type.js';
 
 export class ValidateModule {
   static async run(url: string, options: ValidateOptions = {}): Promise<void> {
-    Display.banner();
+    DisplayUtil.banner();
 
     const config = await ConfigValidator.getConfig();
     if (!config) return;

@@ -5,7 +5,7 @@ import ora, { type Ora } from 'ora';
 import { APP_NAME } from '../constants/app.constant.js';
 import packageJson from '../../package.json' with { type: 'json' };
 
-export class Display {
+export class DisplayUtil {
   static banner(): void {
     const title = figlet.textSync(APP_NAME, { font: 'Slant', horizontalLayout: 'default' });
     const subtitle = '  Thou shalt not break production  ';

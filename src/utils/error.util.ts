@@ -1,4 +1,4 @@
-import { Display } from './display.util.js';
+import { DisplayUtil } from './display.util.js';
 
 export class ErrorUtil {
   static getMessage(error: unknown, fallback = 'Unknown error'): string {
@@ -6,10 +6,10 @@ export class ErrorUtil {
   }
 
   static logUnlessNotFound(contextMessage: string, error: unknown): void {
-    Display.error(contextMessage);
+    DisplayUtil.error(contextMessage);
 
     if (error instanceof Error && (error as { code?: string }).code === 'ENOENT') {
-      Display.info('Run "moses init" if you haven\'t yet.');
+      DisplayUtil.info('Run "moses init" if you haven\'t yet.');
       return;
     }
 

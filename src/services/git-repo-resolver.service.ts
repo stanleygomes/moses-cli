@@ -1,7 +1,7 @@
 import { GitOperationsService } from './git-operations.service.js';
 import { UrlParser } from '../utils/url.util.js';
 import { ConfigStore } from '../store/config.store.js';
-import { Display } from '../utils/display.util.js';
+import { DisplayUtil } from '../utils/display.util.js';
 import { Prompt } from '../utils/prompt.util.js';
 import { ErrorUtil } from '../utils/error.util.js';
 import type { MosesConfig } from '../types/moses-config.type.js';
@@ -30,7 +30,7 @@ export class GitRepoResolver {
     const gitlabConfig = ConfigStore.findGitlabInstance(config, parsedUrl.host);
 
     if (!gitlabConfig) {
-      Display.error(`No GitLab instance configured for host: ${parsedUrl.host}`);
+      DisplayUtil.error(`No GitLab instance configured for host: ${parsedUrl.host}`);
       return null;
     }
 
@@ -42,12 +42,12 @@ export class GitRepoResolver {
       return null;
     }
 
-    Display.success('Repository detected in current directory. Using local context.');
+    DisplayUtil.success('Repository detected in current directory. Using local context.');
     return process.cwd();
   }
 
   private static async promptForRepositoryDownload(): Promise<boolean> {
-    Display.info('Current directory does not match the MR repository.');
+    DisplayUtil.info('Current directory does not match the MR repository.');
     return Prompt.confirm({
       message: 'Do you want to download the repository locally to provide more context to the AI?',
       default: true,
@@ -58,14 +58,14 @@ export class GitRepoResolver {
     targetRepoUrl: string,
     token: string,
   ): Promise<string | null> {
-    const spinner = Display.spinner('Cloning repository...');
+    const spinner = DisplayUtil.spinner('Cloning repository...');
     try {
       const repoPath = await GitOperationsService.cloneRepository(targetRepoUrl, token);
       spinner.succeed(`Repository cloned to: ${repoPath}`);
       return repoPath;
     } catch (error) {
       spinner.fail('Failed to clone repository.');
-      Display.error(ErrorUtil.getMessage(error, 'Unknown error during clone.'));
+      DisplayUtil.error(ErrorUtil.getMessage(error, 'Unknown error during clone.'));
       return null;
     }
   }
