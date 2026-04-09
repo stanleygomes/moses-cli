@@ -9,6 +9,7 @@ export class ValidateCommand extends BaseCommand {
       .description('Validate a GitLab Merge Request with an AI tool')
       .argument('<url>', 'GitLab Merge Request URL')
       .option('-p, --prompt <text>', 'Additional context prompt to send with MR diff')
+      .option('-i, --instruction-file <file>', 'Specific instruction file from skills folder')
       .action((url: string, options: ValidateOptions) => ValidateModule.run(url, options));
   }
 }

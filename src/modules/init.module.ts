@@ -30,7 +30,7 @@ export class InitModule {
 
     const config = ConfigInitService.build(gitlabData, aiData, existingConfig);
     const configPath = await ConfigStore.set(config);
-    const contextInfo = await ContextManager.ensureDefaultContextFiles();
+    const contextInfo = await ContextManager.ensureDefaultSkillsFiles();
 
     ConfigSummaryService.display(configPath, contextInfo);
   }

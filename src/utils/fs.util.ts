@@ -30,4 +30,21 @@ export class FsUtil {
   static resolveHome(value: string): string {
     return value.replace(/^~(?=\/|$)/, os.homedir());
   }
+
+  static async openFolder(path: string): Promise<void> {
+    const { exec } = await import('node:child_process');
+    const platform = os.platform();
+    let command = '';
+
+    if (platform === 'win32') command = `start "" "${path}"`;
+    else if (platform === 'darwin') command = `open "${path}"`;
+    else command = `xdg-open "${path}"`;
+
+    return new Promise((resolve, reject) => {
+      exec(command, (error) => {
+        if (error) reject(error);
+        else resolve();
+      });
+    });
+  }
 }

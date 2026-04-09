@@ -2,6 +2,7 @@ import { BaseCommand } from './base.command.js';
 import { SetFeedbackStyleModule } from '../modules/set-feedback-style.module.js';
 import { SetDiffLimitModule } from '../modules/set-diff-limit.module.js';
 import { ResetConfigModule } from '../modules/reset-config.module.js';
+import { OpenSkillsModule } from '../modules/open-skills.module.js';
 
 export class ConfigCommand extends BaseCommand {
   public register(): void {
@@ -21,5 +22,10 @@ export class ConfigCommand extends BaseCommand {
       .command('reset')
       .description('Clear all local configurations')
       .action(() => ResetConfigModule.run());
+
+    config
+      .command('skills')
+      .description('Open the user skills folder to manage instructions')
+      .action(() => OpenSkillsModule.run());
   }
 }

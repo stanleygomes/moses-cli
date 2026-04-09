@@ -1,34 +1,53 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { DEFAULT_CONTEXT_DIR } from '../constants/paths.constant.js';
+import { DEFAULT_SKILLS_DIR } from '../constants/paths.constant.js';
 import { FsUtil } from '../utils/fs.util.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROMPTS_DIR = path.resolve(__dirname, '../prompts');
 
 export class ContextManager {
-  static getContextDir(): string {
-    return FsUtil.resolveHome(DEFAULT_CONTEXT_DIR);
+  static getSkillsDir(): string {
+    return FsUtil.resolveHome(DEFAULT_SKILLS_DIR);
   }
 
-  static async ensureDefaultContextFiles(): Promise<{
+  static async ensureDefaultSkillsFiles(): Promise<{
     contextDir: string;
     files: string[];
   }> {
-    const contextDir = ContextManager.getContextDir();
+    const contextDir = ContextManager.getSkillsDir();
     await ContextManager.ensureContextDirectory(contextDir);
     const files = await ContextManager.listPromptFiles();
     await ContextManager.copyMissingPromptFiles(files, contextDir);
     return { contextDir, files };
   }
 
-  static async readContextPrompt(extraPrompt = ''): Promise<{ prompt: string; files: string[] }> {
-    const contextDir = ContextManager.getContextDir();
-    const mdFiles = await ContextManager.listMarkdownFiles(contextDir);
+  static async readContextPrompt(
+    extraPrompt = '',
+    specificFile?: string,
+  ): Promise<{ prompt: string; files: string[] }> {
+    const contextDir = ContextManager.getSkillsDir();
+    let mdFiles: string[] = [];
+
+    if (specificFile) {
+      mdFiles = [specificFile];
+    } else {
+      mdFiles = await ContextManager.listMarkdownFiles(contextDir);
+    }
+
     const segments = await ContextManager.readTrimmedContents(contextDir, mdFiles);
     const prompt = ContextManager.buildContextPrompt(segments, extraPrompt);
     return { prompt, files: mdFiles };
+  }
+
+  static async getAvailableInstructionFiles(): Promise<string[]> {
+    const contextDir = ContextManager.getSkillsDir();
+    try {
+      return await ContextManager.listMarkdownFiles(contextDir);
+    } catch {
+      return [];
+    }
   }
 
   private static async ensureContextDirectory(contextDir: string): Promise<void> {

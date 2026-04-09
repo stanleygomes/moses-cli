@@ -43,15 +43,16 @@ moses validate https://gitlab.your-domain.com/group/project/-/merge_requests/123
 
 ### Available Commands
 
-| Command                       | Description                                                  |
-| :---------------------------- | :----------------------------------------------------------- |
-| `moses init`                  | Interactive initial setup (GitLab instances, AI tools, etc.) |
-| `moses validate <url>`        | Fetches and analyzes a Merge Request, providing AI feedback  |
-| `moses gitlab list`           | Lists all your configured GitLab instances                   |
-| `moses gitlab default`        | Switches the active default GitLab instance                  |
-| `moses config feedback-style` | Updates the AI's feedback tone (friendly, pragmatic, etc.)   |
-| `moses config diff-limit`     | Changes the maximum allowed line changes in a single diff    |
-| `moses config reset`          | Wipes all local configurations and starts fresh              |
+| Command                       | Description                                                   |
+| :---------------------------- | :------------------------------------------------------------ |
+| `moses init`                  | Interactive initial setup (GitLab instances, AI tools, etc.)  |
+| `moses validate <url>`        | Fetches and analyzes a Merge Request, providing AI feedback   |
+| `moses gitlab list`           | Lists all your configured GitLab instances                    |
+| `moses gitlab default`        | Switches the active default GitLab instance                   |
+| `moses config feedback-style` | Updates the AI's feedback tone (friendly, pragmatic, etc.)    |
+| `moses config diff-limit`     | Changes the maximum allowed line changes in a single diff     |
+| `moses config skills`         | Opens your global skills folder to manage review instructions |
+| `moses config reset`          | Wipes all local configurations and starts fresh               |
 
 To see more details and options for any command, run:
 
@@ -71,8 +72,8 @@ Flow:
 2. Fetches MR data + diffs + commits from GitLab API
 3. **Smart Repository Lookup**: Detects if your current directory matches the project or offers to **clone/download** the repository for deeper context
 4. **Context Gathering**:
-   - Loads global rules from `~/.moses-cli/context/`
-   - Scans the repository for project-specific instructions (e.g., `copilot-instructions.md`, `README.md`)
+   - **Skill Selection**: Allows you to choose a custom instruction file from `~/.moses-cli/skills/` to guide the AI analysis
+   - **Internal Repository Context**: Scans the repository for project-specific instructions (e.g., `copilot-instructions.md`, `README.md`)
 5. Concatenates all context + optional prompt + MR diff and sends to configured AI tool
 6. Displays response in real-time
 
@@ -95,7 +96,8 @@ Like Moses guiding his people to the promised land, moses validates every merge 
 - Configurable diff changes limit with safe interruption
 - **Internal repository context**: Automatically scans for `copilot-instructions.md`, `.github/copilot-instructions.md`, `claude.md`, `.clauderc`, and `README.md` to feed the AI with project-specific rules.
 - **Auto-repository cloning**: Detects if you're outside the project and offers to download it to extract internal context.
-- Optional extra prompt context in `moses validate`
+- **Interactive Skills**: Prompt-based selection of custom instruction sets.
+- Optional extra prompt context and manual instruction-file selection.
 - Elegant error handling with contextual messages
 
 ## For local development

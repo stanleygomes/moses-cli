@@ -25,15 +25,16 @@ export class ReviewOrchestrator {
         prompt: contextPrompt,
         localFiles,
         repoFiles,
-      } = await ReviewOrchestrator.buildContextPrompt(options.prompt ?? '', repoPath);
+      } = await ReviewOrchestrator.buildContextPrompt(
+        options.prompt ?? '',
+        repoPath,
+        options.instructionFile,
+      );
       const markdown = ReviewOrchestrator.buildReviewMarkdown(url, data);
 
       markdownSpinner.succeed('Context and diff prepared');
 
-      // 1. Organize MR Details
       ReviewOrchestrator.displayMrBrief(data, url);
-
-      // 2. Organize Context Details
       ReviewOrchestrator.displayContextBrief(localFiles, repoFiles, options.prompt);
 
       if (repoPath && repoFiles.length === 0) {
@@ -42,7 +43,6 @@ export class ReviewOrchestrator {
         );
       }
 
-      // 3. AI Analysis
       await ReviewOrchestrator.executeAiReview(config, markdown, contextPrompt);
     } catch (error: unknown) {
       markdownSpinner.fail('Failed to generate markdown or run AI review.');
@@ -97,10 +97,13 @@ export class ReviewOrchestrator {
   private static async buildContextPrompt(
     extraPrompt: string,
     repoPath: string | null,
+    instructionFile?: string,
   ): Promise<{ prompt: string; localFiles: string[]; repoFiles: string[] }> {
-    await ContextManager.ensureDefaultContextFiles();
-    const { prompt: baseContext, files: localFiles } =
-      await ContextManager.readContextPrompt(extraPrompt);
+    await ContextManager.ensureDefaultSkillsFiles();
+    const { prompt: baseContext, files: localFiles } = await ContextManager.readContextPrompt(
+      extraPrompt,
+      instructionFile,
+    );
     const { prompt, repoFiles } = await ReviewOrchestrator.appendRepoContext(baseContext, repoPath);
 
     return { prompt, localFiles, repoFiles };
