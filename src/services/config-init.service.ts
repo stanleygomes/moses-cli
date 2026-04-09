@@ -1,7 +1,7 @@
 import { CONFIG_VERSION } from '../constants/app.constant.js';
 import { DEFAULT_OUTPUT_DIR } from '../constants/paths.constant.js';
 import type { MosesConfig } from '../types/moses-config.type.js';
-import type { GitlabSetupData } from './gitlab-setup.service.js';
+import type { GitlabSetupData } from '../types/gitlab-setup-data.type.js';
 import type { AiSetupData } from './ai-setup.service.js';
 
 export class ConfigInitializer {

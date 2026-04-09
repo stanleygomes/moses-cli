@@ -1,16 +1,11 @@
-import axios from 'axios';
+import { HttpUtil } from '../../utils/http.util.js';
 import { z } from 'zod';
-import { UrlParser } from '../utils/url.util.js';
-import { Display } from '../utils/display.util.js';
-import { Prompt } from '../utils/prompt.util.js';
-import { GitlabApiService } from './gitlab-api.service.js';
-import type { MosesConfig } from '../types/moses-config.type.js';
-
-export interface GitlabSetupData {
-  name: string;
-  url: string;
-  token: string;
-}
+import { UrlParser } from '../../utils/url.util.js';
+import { Display } from '../../utils/display.util.js';
+import { Prompt } from '../../utils/prompt.util.js';
+import { GitlabClient } from '../../api/gitlab/gitlab.client.js';
+import type { MosesConfig } from '../../types/moses-config.type.js';
+import type { GitlabSetupData } from '../../types/gitlab-setup-data.type.js';
 
 export class GitlabSetupWizard {
   static async promptGitlabSetup(existingConfig: MosesConfig | null): Promise<GitlabSetupData> {
@@ -35,11 +30,12 @@ export class GitlabSetupWizard {
   static async validateGitlabToken(gitlabUrl: string, token: string) {
     const tokenSpinner = Display.spinner('Validating token...');
     try {
-      const user = await GitlabApiService.validateToken(gitlabUrl, token);
+      const gitlab = new GitlabClient(gitlabUrl, token);
+      const user = await gitlab.users.getCurrentUser();
       tokenSpinner.succeed(`Valid token! User: @${user.username}`);
       return user;
     } catch (error: unknown) {
-      const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+      const status = HttpUtil.getStatus(error);
       const message = status ? `Failed (Status ${status})` : 'Invalid or expired token.';
       tokenSpinner.fail(message);
       const settingsBase = UrlParser.normalizeBaseUrl(gitlabUrl);

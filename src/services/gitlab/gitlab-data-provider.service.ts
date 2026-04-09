@@ -1,16 +1,21 @@
-import axios from 'axios';
-import { GitlabApiService } from './gitlab-api.service.js';
-import { ConfigStore } from '../store/config.store.js';
-import { Display } from '../utils/display.util.js';
-import { ErrorUtil } from '../utils/error.util.js';
-import { UrlParser } from '../utils/url.util.js';
-import type { MosesConfig } from '../types/moses-config.type.js';
+import { HttpUtil } from '../../utils/http.util.js';
+import { GitlabClient } from '../../api/gitlab/gitlab.client.js';
+import { ConfigStore } from '../../store/config.store.js';
+import { Display } from '../../utils/display.util.js';
+import { ErrorUtil } from '../../utils/error.util.js';
+import { UrlParser } from '../../utils/url.util.js';
+import type { MosesConfig } from '../../types/moses-config.type.js';
 
 export class GitlabDataProvider {
   static async fetchMrData(url: string, config: MosesConfig) {
     const parsedUrl = GitlabDataProvider.parseMergeRequestUrl(url);
-    if (!parsedUrl) return null;
+
+    if (!parsedUrl) {
+      return null;
+    }
+
     const gitlabConfig = ConfigStore.findGitlabInstance(config, parsedUrl.host);
+
     if (!gitlabConfig) {
       Display.error(`No GitLab instance configured for host: ${parsedUrl.host}`);
       return null;
@@ -41,7 +46,8 @@ export class GitlabDataProvider {
   ) {
     const spinner = Display.spinner('Fetching MR data...');
     try {
-      const data = await GitlabApiService.getMergeRequestData(baseUrl, token, projectId, mrIid);
+      const gitlab = new GitlabClient(baseUrl, token);
+      const data = await gitlab.mergeRequests.getBundle(projectId, mrIid);
       spinner.stop();
       return data;
     } catch (error: unknown) {
@@ -52,10 +58,12 @@ export class GitlabDataProvider {
 
   private static handleFetchError(error: unknown, spinner: { fail: (text: string) => void }): void {
     spinner.fail('Failed to fetch MR data.');
-    if (axios.isAxiosError(error) && error.response?.status === 404) {
+
+    if (HttpUtil.getStatus(error) === 404) {
       Display.error('MR not found (404). Check URL and access (VPN, permissions).');
       return;
     }
+
     Display.error(`Error: ${ErrorUtil.getMessage(error)}`);
   }
 }

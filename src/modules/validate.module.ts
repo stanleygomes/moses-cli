@@ -1,5 +1,5 @@
 import { Display } from '../utils/display.util.js';
-import { GitlabDataProvider } from '../services/gitlab-data-provider.service.js';
+import { GitlabDataProvider } from '../services/gitlab/gitlab-data-provider.service.js';
 import { UsageLimitService } from '../services/usage-limit.service.js';
 import { ReviewOrchestrator } from '../services/review-orchestrator.service.js';
 import { ConfigValidator } from '../services/config-validator.service.js';

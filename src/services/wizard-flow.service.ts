@@ -1,6 +1,6 @@
 import { ConfigStore } from '../store/config.store.js';
 import { ContextManager } from './context-manager.service.js';
-import { GitlabSetupWizard } from './gitlab-setup.service.js';
+import { GitlabSetupWizard } from './gitlab/gitlab-setup.service.js';
 import { AiSetupWizard } from './ai-setup.service.js';
 import { ConfigInitializer } from './config-init.service.js';
 import { ConfigSummary } from './config-summary.service.js';
