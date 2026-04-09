@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import chalk from 'chalk';
 import { AiService } from './ai.service.js';
 import { ContextManager } from './context-manager.service.js';
-import { MrMarkdownFormatter } from './mr-markdown-formatter.service.js';
+import { MrMarkdownFormatterUtil } from '../utils/mr-markdown-formatter.util.js';
 import { DisplayUtil } from '../utils/display.util.js';
 import { RepoUtil } from '../utils/repo.util.js';
 import { CONTEXT_FILE_PATTERNS } from '../constants/context.constant.js';
@@ -133,7 +133,7 @@ export class ReviewOrchestrator {
   }
 
   private static buildReviewMarkdown(url: string, data: MergeRequestBundle): string {
-    return MrMarkdownFormatter.buildMergeRequestMarkdown({
+    return MrMarkdownFormatterUtil.buildMergeRequestMarkdown({
       mr: data.mr,
       diffs: data.diffs,
       commits: data.commits,

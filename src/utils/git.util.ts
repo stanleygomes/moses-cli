@@ -3,51 +3,14 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import { DEFAULT_REPOS_DIR } from '../constants/paths.constant.js';
+import { TokenUtil } from './token.util.js';
 
-import { TokenUtil } from '../utils/token.util.js';
-
-export class GitOperationsService {
-  private static normalize(url: string): string {
+export class GitUtil {
+  static normalizeUrl(url: string): string {
     return url
       .replace(/\.git$/, '')
       .replace(/\/$/, '')
       .toLowerCase();
-  }
-
-  static isCurrentDirMatchingRepo(targetRemoteUrl: string): boolean {
-    try {
-      const remotes = execSync('git remote -v', {
-        stdio: ['ignore', 'pipe', 'ignore'],
-        encoding: 'utf-8',
-      });
-      const normalizedTarget = GitOperationsService.normalize(targetRemoteUrl);
-
-      return remotes.split('\n').some((line) => {
-        const match = line.match(/\t(\S+)\s+\((?:fetch|push)\)/);
-        if (match) {
-          return GitOperationsService.normalize(match[1]) === normalizedTarget;
-        }
-        return false;
-      });
-    } catch {
-      return false;
-    }
-  }
-
-  static async cloneRepository(repoUrl: string, token: string): Promise<string> {
-    const targetPath = await GitOperationsService.resolveTargetPath(repoUrl);
-    if (await GitOperationsService.isRepositoryCloned(targetPath)) {
-      return targetPath;
-    }
-
-    try {
-      GitOperationsService.runClone(repoUrl, token, targetPath);
-      return targetPath;
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? TokenUtil.maskInText(error.message, token) : String(error);
-      throw new Error(`Failed to clone repository: ${errorMessage}`);
-    }
   }
 
   static getRepoUrlFromMrUrl(mrUrl: string): string {
@@ -58,24 +21,60 @@ export class GitOperationsService {
     return `${url.origin}${parts[0]}.git`;
   }
 
-  private static resolveReposDir(): string {
+  static resolveReposDir(): string {
     return DEFAULT_REPOS_DIR.replace(/^~(?=\/|$)/, os.homedir());
   }
 
-  private static async resolveTargetPath(repoUrl: string): Promise<string> {
-    const reposDir = GitOperationsService.resolveReposDir();
+  static async resolveTargetPath(repoUrl: string): Promise<string> {
+    const reposDir = GitUtil.resolveReposDir();
     await fs.mkdir(reposDir, { recursive: true });
     const url = new URL(repoUrl);
     const dirName = `${url.hostname}${url.pathname.replace(/\//g, '-')}`.replace(/\.git$/, '');
     return path.join(reposDir, dirName);
   }
 
-  private static async isRepositoryCloned(targetPath: string): Promise<boolean> {
+  static async isRepositoryCloned(targetPath: string): Promise<boolean> {
     try {
       await fs.access(path.join(targetPath, '.git'));
       return true;
     } catch {
       return false;
+    }
+  }
+
+  static isCurrentDirMatchingRepo(targetRemoteUrl: string): boolean {
+    try {
+      const remotes = execSync('git remote -v', {
+        stdio: ['ignore', 'pipe', 'ignore'],
+        encoding: 'utf-8',
+      });
+      const normalizedTarget = GitUtil.normalizeUrl(targetRemoteUrl);
+
+      return remotes.split('\n').some((line) => {
+        const match = line.match(/\t(\S+)\s+\((?:fetch|push)\)/);
+        if (match) {
+          return GitUtil.normalizeUrl(match[1]) === normalizedTarget;
+        }
+        return false;
+      });
+    } catch {
+      return false;
+    }
+  }
+
+  static async cloneRepository(repoUrl: string, token: string): Promise<string> {
+    const targetPath = await GitUtil.resolveTargetPath(repoUrl);
+    if (await GitUtil.isRepositoryCloned(targetPath)) {
+      return targetPath;
+    }
+
+    try {
+      GitUtil.runClone(repoUrl, token, targetPath);
+      return targetPath;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? TokenUtil.maskInText(error.message, token) : String(error);
+      throw new Error(`Failed to clone repository: ${errorMessage}`);
     }
   }
 
@@ -92,7 +91,7 @@ export class GitOperationsService {
   private static runClone(repoUrl: string, token: string, targetPath: string): void {
     execFileSync('git', ['clone', '--depth', '1', repoUrl, targetPath], {
       stdio: 'inherit',
-      env: GitOperationsService.buildCloneEnv(token),
+      env: GitUtil.buildCloneEnv(token),
     });
   }
 }

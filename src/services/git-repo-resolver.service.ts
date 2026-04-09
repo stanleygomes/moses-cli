@@ -1,13 +1,13 @@
-import { GitOperationsService } from './git-operations.service.js';
 import { UrlParser } from '../utils/url.util.js';
 import { ConfigStore } from '../store/config.store.js';
 import { DisplayUtil } from '../utils/display.util.js';
 import { ErrorUtil } from '../utils/error.util.js';
+import { GitUtil } from '../utils/git.util.js';
 import type { MosesConfig } from '../types/moses-config.type.js';
 
 export class GitRepoResolver {
   static async resolveRepositoryPath(url: string, config: MosesConfig): Promise<string | null> {
-    const targetRepoUrl = GitOperationsService.getRepoUrlFromMrUrl(url);
+    const targetRepoUrl = GitUtil.getRepoUrlFromMrUrl(url);
 
     const localRepositoryPath = GitRepoResolver.resolveCurrentDirectoryRepository(targetRepoUrl);
     if (localRepositoryPath) {
@@ -34,7 +34,7 @@ export class GitRepoResolver {
   }
 
   private static resolveCurrentDirectoryRepository(targetRepoUrl: string): string | null {
-    if (!GitOperationsService.isCurrentDirMatchingRepo(targetRepoUrl)) {
+    if (!GitUtil.isCurrentDirMatchingRepo(targetRepoUrl)) {
       return null;
     }
 
@@ -48,7 +48,7 @@ export class GitRepoResolver {
   ): Promise<string | null> {
     const spinner = DisplayUtil.spinner('Cloning repository...');
     try {
-      const repoPath = await GitOperationsService.cloneRepository(targetRepoUrl, token);
+      const repoPath = await GitUtil.cloneRepository(targetRepoUrl, token);
       spinner.succeed(`Repository cloned to: ${repoPath}`);
       return repoPath;
     } catch (error) {

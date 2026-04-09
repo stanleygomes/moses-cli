@@ -1,15 +1,10 @@
+import type { BuildMergeRequestMarkdownInput } from '../types/build-mr-markdown-input.type.js';
+
 import dayjs from 'dayjs';
 import type { MergeRequestBundle } from '../types/merge-request-bundle.type.js';
 import type { MergeRequestDiff } from '../types/merge-request-diff.type.js';
 
-interface BuildMergeRequestMarkdownInput {
-  mr: MergeRequestBundle['mr'];
-  diffs: MergeRequestBundle['diffs'];
-  commits: MergeRequestBundle['commits'];
-  url: string;
-}
-
-export class MrMarkdownFormatter {
+export class MrMarkdownFormatterUtil {
   static buildMergeRequestMarkdown({
     mr,
     diffs,
@@ -17,9 +12,9 @@ export class MrMarkdownFormatter {
     url,
   }: BuildMergeRequestMarkdownInput): string {
     const createdAt = dayjs(mr.created_at).format('YYYY-MM-DD');
-    const commitLines = MrMarkdownFormatter.formatCommitLines(commits);
-    const diffSections = MrMarkdownFormatter.formatDiffSections(diffs);
-    const stats = MrMarkdownFormatter.buildStatsSection(diffs, mr.changes_count);
+    const commitLines = MrMarkdownFormatterUtil.formatCommitLines(commits);
+    const diffSections = MrMarkdownFormatterUtil.formatDiffSections(diffs);
+    const stats = MrMarkdownFormatterUtil.buildStatsSection(diffs, mr.changes_count);
 
     return `# MR #${mr.iid} — ${mr.title}
 
