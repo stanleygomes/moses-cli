@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import chalk from 'chalk';
-import { AiReviewService } from './ai-review.service.js';
+import { AiService } from './ai.service.js';
 import { ContextManager } from './context-manager.service.js';
 import { MrMarkdownFormatter } from './mr-markdown-formatter.service.js';
 import { DisplayUtil } from '../utils/display.util.js';
@@ -159,7 +159,7 @@ export class ReviewOrchestrator {
         }
       };
 
-      AiReviewService.runAiReview(config.ai?.tool ?? 'copilot', markdown, {
+      AiService.runAiReview(config.ai?.tool ?? 'copilot', markdown, {
         options: {
           feedbackStyle: config.ai?.feedbackStyle,
           contextPrompt,

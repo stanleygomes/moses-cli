@@ -2,14 +2,10 @@ import { CONFIG_VERSION } from '../constants/app.constant.js';
 import { DEFAULT_OUTPUT_DIR } from '../constants/paths.constant.js';
 import type { MosesConfig } from '../types/moses-config.type.js';
 import type { GitlabSetupData } from '../types/gitlab-setup-data.type.js';
-import type { AiSetupData } from './ai-setup.service.js';
+import type { AiService } from '../types/ai-service.type.js';
 
 export class ConfigInitService {
-  static build(
-    gitlab: GitlabSetupData,
-    ai: AiSetupData,
-    existing: MosesConfig | null,
-  ): MosesConfig {
+  static build(gitlab: GitlabSetupData, ai: AiService, existing: MosesConfig | null): MosesConfig {
     const baseConfig: MosesConfig = existing ?? {
       version: CONFIG_VERSION,
       defaultGitlab: gitlab.name,

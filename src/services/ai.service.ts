@@ -1,37 +1,34 @@
+import { spawn } from 'node:child_process';
 import { AI_TOOLS, DEFAULT_MAX_DIFF_CHANGES, TOOL_MODELS } from '../constants/ai.constant.js';
-import { DisplayUtil } from '../utils/display.util.js';
-import { ToolValidator } from '../utils/tool-validator.util.js';
-import { Prompt } from '../utils/prompt.util.js';
-import { AiToolUtil } from '../utils/ai-tool.util.js';
-import { FeedbackStyleUtil } from '../utils/feedback-style.util.js';
-import { diffLimitSchema } from '../validators/diff-limit.validator.js';
-import { aiModelSchema } from '../validators/ai-model.validator.js';
-import { ContextManager } from './context-manager.service.js';
+import {
+  FEEDBACK_STYLE_GUIDANCE,
+  TERMINAL_OUTPUT_GUIDELINE,
+} from '../constants/feedback.constant.js';
 import type { AiToolKey } from '../types/ai-tool-key.type.js';
 import type { FeedbackStyle } from '../types/feedback-style.type.js';
 import type { MosesConfig } from '../types/moses-config.type.js';
+import type { RunAiReviewHandlers } from '../types/run-ai-review-handlers.type.js';
+import { AiToolUtil } from '../utils/ai-tool.util.js';
+import type { AiService as AiServiceData } from '../types/ai-service.type.js';
+import { DisplayUtil } from '../utils/display.util.js';
+import { FeedbackStyleUtil } from '../utils/feedback-style.util.js';
+import { Prompt } from '../utils/prompt.util.js';
+import { ToolValidator } from '../utils/tool-validator.util.js';
+import { aiModelSchema } from '../validators/ai-model.validator.js';
+import { diffLimitSchema } from '../validators/diff-limit.validator.js';
+import { ContextManager } from './context-manager.service.js';
 
-export interface AiSetupData {
-  tool: AiToolKey;
-  feedbackStyle: FeedbackStyle;
-  maxDiffChanges: number;
-}
+export class AiService {
+  static async promptAiSetup(existingConfig: MosesConfig | null): Promise<AiServiceData> {
+    AiService.displayIntro();
 
-export class AiSetupWizard {
-  static async promptAiSetup(existingConfig: MosesConfig | null): Promise<AiSetupData> {
-    AiSetupWizard.displayIntro();
+    const tool = await AiService.chooseAiTool(existingConfig?.ai?.tool);
 
-    const tool = await AiSetupWizard.chooseAiTool(existingConfig?.ai?.tool);
+    AiService.displayFeedbackStyleTip();
+    const feedbackStyle = await AiService.chooseFeedbackStyle(existingConfig?.ai?.feedbackStyle);
 
-    AiSetupWizard.displayFeedbackStyleTip();
-    const feedbackStyle = await AiSetupWizard.chooseFeedbackStyle(
-      existingConfig?.ai?.feedbackStyle,
-    );
-
-    AiSetupWizard.displayDiffLimitTip();
-    const maxDiffChanges = await AiSetupWizard.chooseMaxDiffChanges(
-      existingConfig?.ai?.maxDiffChanges,
-    );
+    AiService.displayDiffLimitTip();
+    const maxDiffChanges = await AiService.chooseMaxDiffChanges(existingConfig?.ai?.maxDiffChanges);
 
     return { tool, feedbackStyle, maxDiffChanges };
   }
@@ -80,9 +77,9 @@ export class AiSetupWizard {
 
   static async chooseAiTool(existingTool: AiToolKey | undefined): Promise<AiToolKey> {
     while (true) {
-      const chosen = await AiSetupWizard.promptAiTool(existingTool);
-      const toolInfo = AiSetupWizard.findAiToolByKey(chosen);
-      const validation = AiSetupWizard.validateAiToolInstallation(toolInfo);
+      const chosen = await AiService.promptAiTool(existingTool);
+      const toolInfo = AiService.findAiToolByKey(chosen);
+      const validation = AiService.validateAiToolInstallation(toolInfo);
 
       if (validation.installed && validation.path) {
         DisplayUtil.success(`${toolInfo.name} found at ${validation.path}`);
@@ -90,13 +87,9 @@ export class AiSetupWizard {
       }
 
       if (!validation.installed) {
-        AiSetupWizard.displayAiToolInstallInfo(
-          toolInfo,
-          validation.installCmd,
-          validation.installUrl,
-        );
+        AiService.displayAiToolInstallInfo(toolInfo, validation.installCmd, validation.installUrl);
       }
-      const shouldRetry = await AiSetupWizard.askRetryToolSelection();
+      const shouldRetry = await AiService.askRetryToolSelection();
       if (!shouldRetry) {
         throw new Error('AI tool not installed. Install a supported tool and run again.');
       }
@@ -156,13 +149,13 @@ export class AiSetupWizard {
     });
   }
 
-  static async chooseFeedbackStyle(
+  private static async chooseFeedbackStyle(
     existingStyle: FeedbackStyle | undefined,
   ): Promise<FeedbackStyle> {
     return FeedbackStyleUtil.promptSelection(existingStyle);
   }
 
-  static async chooseMaxDiffChanges(currentLimit: number | undefined): Promise<number> {
+  private static async chooseMaxDiffChanges(currentLimit: number | undefined): Promise<number> {
     const fallback =
       Number.isInteger(currentLimit) && currentLimit! > 0
         ? (currentLimit as number)
@@ -173,5 +166,47 @@ export class AiSetupWizard {
       default: String(fallback),
       schema: diffLimitSchema,
     });
+  }
+
+  static runAiReview(
+    toolKey: AiToolKey,
+    markdownContent: string,
+    handlers: RunAiReviewHandlers = {},
+  ): void {
+    const tool = AiToolUtil.getByKeyOrThrow(toolKey);
+
+    const prompt = this.buildPrompt(markdownContent, handlers.options);
+    const args = [...tool.args];
+
+    if (handlers.options?.model) {
+      args.push('--model', handlers.options.model);
+    }
+
+    args.push(prompt);
+
+    const child = spawn(tool.command, args, {
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+
+    child.stdout.on('data', (chunk: Buffer) => handlers.onStdout?.(chunk.toString()));
+    child.stderr.on('data', (chunk: Buffer) => handlers.onStderr?.(chunk.toString()));
+    child.on('close', (code: number | null) => handlers.onClose?.(code));
+    child.on('error', (error: Error) => handlers.onError?.(error));
+  }
+
+  private static buildPrompt(
+    markdownContent: string,
+    options: RunAiReviewHandlers['options'] = {},
+  ): string {
+    const feedbackStyle = options.feedbackStyle ?? 'pragmatic';
+    const toneInstruction =
+      FEEDBACK_STYLE_GUIDANCE[feedbackStyle] ?? FEEDBACK_STYLE_GUIDANCE.pragmatic;
+    const context = options.contextPrompt?.trim();
+
+    return `${context ? `${context}\n\n` : ''}${TERMINAL_OUTPUT_GUIDELINE}\n\n${toneInstruction}
+
+Merge Request Diff:
+
+${markdownContent}`;
   }
 }
