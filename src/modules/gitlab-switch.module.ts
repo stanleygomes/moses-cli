@@ -1,6 +1,7 @@
+import { GitlabInstanceManager } from '../services/gitlab-instance-manager.service.js';
 import { ConfigStore } from '../store/config.store.js';
 import { DisplayUtil } from '../utils/display.util.js';
-import { GitlabInstanceManager } from '../services/gitlab-instance-manager.service.js';
+import { ErrorUtil } from '../utils/error.util.js';
 
 export class GitlabSwitchModule {
   static async run(): Promise<void> {
@@ -16,7 +17,7 @@ export class GitlabSwitchModule {
 
       await GitlabInstanceManager.promptAndSwitch(config);
     } catch (error) {
-      GitlabInstanceManager.handleSwitchError(error);
+      ErrorUtil.logUnlessNotFound('Could not switch GitLab instance.', error);
     }
   }
 }

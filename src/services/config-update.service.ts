@@ -24,4 +24,15 @@ export class ConfigUpdateService {
       },
     }));
   }
+
+  static async updateDefaultGitlab(config: MosesConfig, nextDefault: string): Promise<MosesConfig> {
+    return ConfigUpdateService.updateAndSave(config, (current) => ({
+      ...current,
+      defaultGitlab: nextDefault,
+      gitlabs: current.gitlabs.map((gitlab) => ({
+        ...gitlab,
+        default: gitlab.name === nextDefault,
+      })),
+    }));
+  }
 }

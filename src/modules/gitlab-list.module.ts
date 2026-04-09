@@ -1,6 +1,7 @@
 import { ConfigStore } from '../store/config.store.js';
 import { DisplayUtil } from '../utils/display.util.js';
 import { GitlabInstanceManager } from '../services/gitlab-instance-manager.service.js';
+import { ErrorUtil } from '../utils/error.util.js';
 
 export class GitlabListModule {
   static async run(): Promise<void> {
@@ -16,7 +17,7 @@ export class GitlabListModule {
 
       GitlabInstanceManager.displayInstances(config);
     } catch (error) {
-      GitlabInstanceManager.handleLoadError(error);
+      ErrorUtil.logUnlessNotFound('Could not load Moses configuration.', error);
     }
   }
 }
