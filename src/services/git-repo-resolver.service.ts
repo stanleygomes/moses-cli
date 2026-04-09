@@ -2,7 +2,6 @@ import { GitOperationsService } from './git-operations.service.js';
 import { UrlParser } from '../utils/url.util.js';
 import { ConfigStore } from '../store/config.store.js';
 import { DisplayUtil } from '../utils/display.util.js';
-import { Prompt } from '../utils/prompt.util.js';
 import { ErrorUtil } from '../utils/error.util.js';
 import type { MosesConfig } from '../types/moses-config.type.js';
 
@@ -14,9 +13,6 @@ export class GitRepoResolver {
     if (localRepositoryPath) {
       return localRepositoryPath;
     }
-
-    const shouldDownload = await GitRepoResolver.promptForRepositoryDownload();
-    if (!shouldDownload) return null;
 
     return GitRepoResolver.downloadRepository(url, targetRepoUrl, config);
   }
@@ -44,14 +40,6 @@ export class GitRepoResolver {
 
     DisplayUtil.success('Repository detected in current directory. Using local context.');
     return process.cwd();
-  }
-
-  private static async promptForRepositoryDownload(): Promise<boolean> {
-    DisplayUtil.info('Current directory does not match the MR repository.');
-    return Prompt.confirm({
-      message: 'Do you want to download the repository locally to provide more context to the AI?',
-      default: true,
-    });
   }
 
   private static async cloneRepositoryWithFeedback(
