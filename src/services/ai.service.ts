@@ -178,9 +178,9 @@ export class AiService {
     const prompt = this.buildPrompt(markdownContent, handlers.options);
     const args = [...tool.args];
 
-    if (handlers.options?.model) {
-      args.push('--model', handlers.options.model);
-    }
+    // if (handlers.options?.model) {
+    //   args.push('--model', handlers.options.model);
+    // }
 
     args.push(prompt);
 

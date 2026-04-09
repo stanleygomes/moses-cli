@@ -28,17 +28,26 @@ export class ContextManager {
     specificFile?: string,
   ): Promise<{ prompt: string; files: string[] }> {
     const contextDir = ContextManager.getSkillsDir();
-    let mdFiles: string[] = [];
+    const mdFiles = await ContextManager.listMarkdownFiles(contextDir);
 
-    if (specificFile) {
-      mdFiles = [specificFile];
-    } else {
-      mdFiles = await ContextManager.listMarkdownFiles(contextDir);
+    const filesToRead = new Set<string>();
+
+    if (mdFiles.includes('base-prompt.md')) {
+      filesToRead.add('base-prompt.md');
     }
 
-    const segments = await ContextManager.readTrimmedContents(contextDir, mdFiles);
+    if (specificFile) {
+      filesToRead.add(specificFile);
+    } else {
+      // If no specific file, include everything
+      mdFiles.forEach((f) => filesToRead.add(f));
+    }
+
+    const finalFiles = Array.from(filesToRead);
+    const segments = await ContextManager.readTrimmedContents(contextDir, finalFiles);
     const prompt = ContextManager.buildContextPrompt(segments, extraPrompt);
-    return { prompt, files: mdFiles };
+
+    return { prompt, files: finalFiles };
   }
 
   static async getAvailableInstructionFiles(): Promise<string[]> {

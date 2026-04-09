@@ -30,9 +30,9 @@ export class ValidateModule {
       options.instructionFile = await AiService.chooseSkillsFile();
     }
 
-    if (!options.model) {
-      options.model = (await AiService.chooseModel(config.ai.tool, undefined)) ?? undefined;
-    }
+    // if (!options.model) {
+    //   options.model = (await AiService.chooseModel(config.ai.tool, undefined)) ?? undefined;
+    // }
 
     await ReviewOrchestrator.runReviewTask(url, data, config, options, repoPath);
   }
