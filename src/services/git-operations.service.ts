@@ -4,6 +4,8 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import { DEFAULT_REPOS_DIR } from '../constants/paths.constant.js';
 
+import { TokenUtil } from '../utils/token.util.js';
+
 export class GitOperationsService {
   private static normalize(url: string): string {
     return url
@@ -43,9 +45,7 @@ export class GitOperationsService {
       return targetPath;
     } catch (error) {
       const errorMessage =
-        error instanceof Error
-          ? GitOperationsService.maskToken(error.message, token)
-          : String(error);
+        error instanceof Error ? TokenUtil.maskInText(error.message, token) : String(error);
       throw new Error(`Failed to clone repository: ${errorMessage}`);
     }
   }
@@ -94,15 +94,5 @@ export class GitOperationsService {
       stdio: 'inherit',
       env: GitOperationsService.buildCloneEnv(token),
     });
-  }
-
-  private static maskToken(text: string, token: string): string {
-    if (!token) return text;
-    const basicAuth = Buffer.from(`oauth2:${token}`).toString('base64');
-    const encodedToken = encodeURIComponent(token);
-    return [token, encodedToken, basicAuth].reduce(
-      (maskedText, secret) => (secret ? maskedText.replaceAll(secret, '***') : maskedText),
-      text,
-    );
   }
 }

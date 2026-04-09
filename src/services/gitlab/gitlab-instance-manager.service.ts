@@ -1,6 +1,6 @@
 import { Display } from '../../utils/display.util.js';
 import { Prompt } from '../../utils/prompt.util.js';
-import { ConfigUtil } from '../../utils/config.util.js';
+import { ConfigUpdateService } from '../config-update.service.js';
 import { ErrorUtil } from '../../utils/error.util.js';
 import { TokenUtil } from '../../utils/token.util.js';
 import type { MosesConfig } from '../../types/moses-config.type.js';
@@ -50,7 +50,7 @@ export class GitlabInstanceManager {
   }
 
   static async updateConfig(config: MosesConfig, nextDefault: string): Promise<void> {
-    await ConfigUtil.updateAndSave(config, (current) => ({
+    await ConfigUpdateService.updateAndSave(config, (current) => ({
       ...current,
       defaultGitlab: nextDefault,
       gitlabs: GitlabInstanceManager.markDefaultGitlab(current.gitlabs, nextDefault),
@@ -59,12 +59,7 @@ export class GitlabInstanceManager {
   }
 
   static handleLoadError(error: unknown): void {
-    Display.error('Could not load Moses configuration.');
-    Display.info('Run "moses init" if you haven\'t yet.');
-
-    if (!(error instanceof Error && (error as { code?: string }).code === 'ENOENT')) {
-      console.log(error);
-    }
+    ErrorUtil.logUnlessNotFound('Could not load Moses configuration.', error);
   }
 
   static handleSwitchError(error: unknown): void {

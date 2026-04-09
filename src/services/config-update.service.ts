@@ -2,7 +2,7 @@ import { ConfigStore } from '../store/config.store.js';
 import type { AiConfig } from '../types/ai-config.type.js';
 import type { MosesConfig } from '../types/moses-config.type.js';
 
-export class ConfigUtil {
+export class ConfigUpdateService {
   static async updateAndSave(
     config: MosesConfig,
     updater: (current: MosesConfig) => MosesConfig,
@@ -16,7 +16,7 @@ export class ConfigUtil {
     config: MosesConfig,
     updates: Partial<AiConfig>,
   ): Promise<MosesConfig> {
-    return ConfigUtil.updateAndSave(config, (current) => ({
+    return ConfigUpdateService.updateAndSave(config, (current) => ({
       ...current,
       ai: {
         ...current.ai,

@@ -1,6 +1,8 @@
 import { ConfigStore } from '../store/config.store.js';
 import { Display } from '../utils/display.util.js';
-import { FeedbackStyleManager } from '../services/feedback-style-manager.service.js';
+import { FeedbackStyleUtil } from '../utils/feedback-style.util.js';
+import { ErrorUtil } from '../utils/error.util.js';
+import { ConfigUpdateService } from '../services/config-update.service.js';
 
 export class SetFeedbackStyleModule {
   static async run(): Promise<void> {
@@ -8,11 +10,12 @@ export class SetFeedbackStyleModule {
 
     try {
       const config = await ConfigStore.get();
-      const style = await FeedbackStyleManager.promptForStyle(config.ai?.feedbackStyle);
+      const style = await FeedbackStyleUtil.promptSelection(config.ai?.feedbackStyle);
 
-      await FeedbackStyleManager.updateAndSave(config, style);
+      await ConfigUpdateService.updateAiAndSave(config, { feedbackStyle: style });
+      Display.success('Feedback style updated successfully.');
     } catch (error) {
-      FeedbackStyleManager.handleError(error);
+      ErrorUtil.logUnlessNotFound('Could not update feedback style.', error);
     }
   }
 }
