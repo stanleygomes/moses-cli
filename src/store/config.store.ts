@@ -44,6 +44,7 @@ export class ConfigStore {
     const configPath = ConfigStore.getConfigPath();
     const content = JSON.stringify(config, null, 2);
 
+    await FsUtil.ensureDir(ConfigStore.getConfigDir());
     await FsUtil.writeTextFile(configPath, content);
     await FsUtil.setPermissions(configPath, 0o600);
 
